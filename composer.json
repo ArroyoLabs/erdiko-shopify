@@ -1,0 +1,20 @@
+{
+	"name":"erdiko/shopify",
+    "description": "Erdiko Shopify Module",
+    "keywords": ["framework", "erdiko", "erdiko-shopify"],
+    "homepage": "http://erdiko.org",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Arroyo Labs",
+            "email": "info@arroyolabs.com"
+        }
+    ],
+    "require": {
+    	"php": ">=5.3.3"
+    },
+    "config": {
+        "vendor-dir": "vendor",
+        "minimum-stability": "dev"
+    }
+}
