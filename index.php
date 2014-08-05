@@ -6,33 +6,27 @@
 
     require 'shopify.php';
 
-    
-    if (isset($_GET['code'])) { // if the code param has been sent to this page... we are in Step 2
-        // Step 2: do a form POST to get the access token
-        $shopifyClient = new ShopifyClient($_GET['shop'], "", SHOPIFY_API_KEY, SHOPIFY_SECRET);
-        session_unset();
+    if (isset($_GET['getProduct']) || isset($_POST['getProduct'])) {
+
+        //echo "<pre>".$_SESSION['shop']."</pre>";
+        echo "<pre>".$_GET['shop']."</pre>";
+        $sc = new ShopifyClient($_GET['shop'], "", SHOPIFY_API_KEY, SHOPIFY_SECRET);
+        //session_unset();
 
         // Now, request the token and store it in your session.
-        $_SESSION['token'] = $shopifyClient->getAccessToken($_GET['code']);
+        $_SESSION['token'] = $sc->getAccessToken($_GET['code']);
         if ($_SESSION['token'] != '')
             $_SESSION['shop'] = $_GET['shop'];
 
-
-
-
-
-
-        $sc = new ShopifyClient($_SESSION['shop'], $_SESSION['token'], $api_key, $secret);
-
          try
     {
+        echo "<p>".'YYYYYYYYYYYYY'."</p>";
         // Get all products
         $products = $sc->call('GET', '/admin/products.json', array('published_status'=>'published'));
-
         // header('Content-Type: application/json');
         $json_string = json_encode($products, JSON_PRETTY_PRINT);
         echo "<pre>".$json_string."</pre>";
-
+        
         // Create a new recurring charge
         $charge = array
         (
@@ -60,9 +54,9 @@
             // If you're here, either HTTP status code was >= 400 or response contained the key 'errors'
         }
 
-    }
-    catch (ShopifyApiException $e)
-    {
+     }
+     catch (ShopifyApiException $e)
+     {
         /* 
          $e->getMethod() -> http method (GET, POST, PUT, DELETE)
          $e->getPath() -> path of failing request
@@ -71,15 +65,32 @@
          $e->getParams() -> optional data that may have been passed that caused the failure
 
         */
-    }
-    catch (ShopifyCurlException $e)
-    {
+      }
+      catch (ShopifyCurlException $e)
+     {
         // $e->getMessage() returns value of curl_errno() and $e->getCode() returns value of curl_ error()
+     }
+        header("Location: index.php");
+        exit; 
     }
-    
+    else if (isset($_GET['code'])) { // if the code param has been sent to this page... we are in Step 2
+        // Step 2: do a form POST to get the access token
+        echo "<pre>".$_GET['shop']."</pre>";
+        $shopifyClient = new ShopifyClient($_GET['shop'], "", SHOPIFY_API_KEY, SHOPIFY_SECRET);
+        //session_unset();
 
-        //header("Location: index.php");
-        exit;       
+        // Now, request the token and store it in your session.
+        $_SESSION['token'] = $shopifyClient->getAccessToken($_GET['code']);
+        if ($_SESSION['token'] != '')
+            $_SESSION['shop'] = $_GET['shop'];
+
+        //echo "<pre>".$_SESSION['shop']."</pre>";
+        //echo "<pre>".$_SESSION['token']."</pre>";
+
+        header("Location: index.php");
+        exit;  
+
+
     }
     // if they posted the form with the shop name
     else if (isset($_POST['shop']) || isset($_GET['shop'])) {
@@ -118,14 +129,11 @@
       </label> 
       <p> 
         <input id="shop" name="shop" size="45" type="text" value="" /> 
+        <input type="radio" name="getProduct" value="product">Product
+        <input type="radio" name="getProduct" value="Order">Order
         <input name="commit" type="submit" value="Install" /> 
       </p> 
+    
+      
     </form>
-    <form action="" method="post">
-      <label for='getProduct'><strong>Get Product</strong> 
-      </label> 
-      <p> 
-        <input id="getProduct" name="getProduct" size="45" type="text" value="" /> 
-        <input name="commit" type="submit" value="Install" /> 
-      </p> 
-    </form>
+
