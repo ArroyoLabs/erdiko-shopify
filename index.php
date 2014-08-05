@@ -1,10 +1,14 @@
 <?php
-    
+
+    define('SHOPIFY_API_KEY', 'ec29dd93ee7e40a8f1d9b914ab16ba04');
+    define('SHOPIFY_SECRET', '6451dac2ba28f48fecb1ec8aa3d0bcb8');
+    define('SHOPIFY_SCOPE', 'write_products');
+
     require 'shopify.php';
+
+    
     if (isset($_GET['code'])) { // if the code param has been sent to this page... we are in Step 2
-        
         // Step 2: do a form POST to get the access token
-        
         $shopifyClient = new ShopifyClient($_GET['shop'], "", SHOPIFY_API_KEY, SHOPIFY_SECRET);
         session_unset();
 
@@ -13,7 +17,68 @@
         if ($_SESSION['token'] != '')
             $_SESSION['shop'] = $_GET['shop'];
 
-        header("Location: index.php");
+
+
+
+
+
+        $sc = new ShopifyClient($_SESSION['shop'], $_SESSION['token'], $api_key, $secret);
+
+         try
+    {
+        // Get all products
+        $products = $sc->call('GET', '/admin/products.json', array('published_status'=>'published'));
+
+        // header('Content-Type: application/json');
+        $json_string = json_encode($products, JSON_PRETTY_PRINT);
+        echo "<pre>".$json_string."</pre>";
+
+        // Create a new recurring charge
+        $charge = array
+        (
+            "recurring_application_charge"=>array
+            (
+                "price"=>10.0,
+                "name"=>"Super Duper Plan",
+                "return_url"=>"http://super-duper.shopifyapps.com",
+                "test"=>true
+            )
+        );
+
+        try
+        {
+            $recurring_application_charge = $sc->call('POST', '/admin/recurring_application_charges.json', $charge);
+
+            // API call limit helpers
+            echo $sc->callsMade(); // 2
+            echo $sc->callsLeft(); // 498
+            echo $sc->callLimit(); // 500
+
+        }
+        catch (ShopifyApiException $e)
+        {
+            // If you're here, either HTTP status code was >= 400 or response contained the key 'errors'
+        }
+
+    }
+    catch (ShopifyApiException $e)
+    {
+        /* 
+         $e->getMethod() -> http method (GET, POST, PUT, DELETE)
+         $e->getPath() -> path of failing request
+         $e->getResponseHeaders() -> actually response headers from failing request
+         $e->getResponse() -> curl response object
+         $e->getParams() -> optional data that may have been passed that caused the failure
+
+        */
+    }
+    catch (ShopifyCurlException $e)
+    {
+        // $e->getMessage() returns value of curl_errno() and $e->getCode() returns value of curl_ error()
+    }
+    
+
+        //header("Location: index.php");
         exit;       
     }
     // if they posted the form with the shop name
@@ -53,6 +118,14 @@
       </label> 
       <p> 
         <input id="shop" name="shop" size="45" type="text" value="" /> 
+        <input name="commit" type="submit" value="Install" /> 
+      </p> 
+    </form>
+    <form action="" method="post">
+      <label for='getProduct'><strong>Get Product</strong> 
+      </label> 
+      <p> 
+        <input id="getProduct" name="getProduct" size="45" type="text" value="" /> 
         <input name="commit" type="submit" value="Install" /> 
       </p> 
     </form>
