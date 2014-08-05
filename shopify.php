@@ -1,5 +1,5 @@
 <?php
-class ShopifyClient {
+class Shopify {
 	public $shop_domain;
 	private $token;
 	private $api_key;
