@@ -16,5 +16,9 @@
     "config": {
         "vendor-dir": "vendor",
         "minimum-stability": "dev"
+    },
+     "autoload": {
+        "psr-4": {"Shopify\\": "src/"}
     }
+
 }
