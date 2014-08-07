@@ -14,6 +14,11 @@ class Shopify {
 		$this->secret = $secret;
 	}
 
+	public function setToken($token)
+	{
+		$this->token = $token;
+	}
+
 	// Get the URL required to request authorization
 	public function getAuthorizeUrl($scope, $redirect_url='') {
 		$url = "http://{$this->shop_domain}/admin/oauth/authorize?client_id={$this->api_key}&scope=" . urlencode($scope);
