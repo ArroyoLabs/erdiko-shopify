@@ -34,7 +34,9 @@ class Shopify {
 		// POST to  POST https://SHOP_NAME.myshopify.com/admin/oauth/access_token
 		$url = "https://{$this->shop_domain}/admin/oauth/access_token";
 		$payload = "client_id={$this->api_key}&client_secret={$this->secret}&code=$code";
+		//echo $url.$payload;
 		$response = $this->curlHttpApiRequest('POST', $url, '', $payload, array());
+		//var_dump($response);
 		$response = json_decode($response, true);
 		if (isset($response['access_token']))
 			return $response['access_token'];
@@ -59,18 +61,16 @@ class Shopify {
 	public function call($method, $path, $params=array())
 	{
 		$baseurl = "https://{$this->shop_domain}/";
-	
 		$url = $baseurl.ltrim($path, '/');
 		$query = in_array($method, array('GET','DELETE')) ? $params : array();
 		$payload = in_array($method, array('POST','PUT')) ? stripslashes(json_encode($params)) : array();
 		$request_headers = in_array($method, array('POST','PUT')) ? array("Content-Type: application/json; charset=utf-8", 'Expect:') : array();
-
+		//var_dump($this->token);
 		// add auth headers
 		$request_headers[] = 'X-Shopify-Access-Token: ' . $this->token;
-
 		$response = $this->curlHttpApiRequest($method, $url, $query, $payload, $request_headers);
 		$response = json_decode($response, true);
-
+		//var_dump($response);
 		if (isset($response['errors']) or ($this->last_response_headers['http_status_code'] >= 400))
 			throw new ShopifyApiException($method, $path, $params, $this->last_response_headers, $response);
 
@@ -95,6 +95,9 @@ class Shopify {
 
 	private function curlHttpApiRequest($method, $url, $query='', $payload='', $request_headers=array())
 	{
+		//echo "Message Body";
+		//var_dump($method);
+		//var_dump($url);
 		$url = $this->curlAppendQuery($url, $query);
 		$ch = curl_init($url);
 		$this->curlSetopts($ch, $method, $payload, $request_headers);
@@ -106,7 +109,7 @@ class Shopify {
 		if ($errno) throw new ShopifyCurlException($error, $errno);
 		list($message_headers, $message_body) = preg_split("/\r\n\r\n|\n\n|\r\r/", $response, 2);
 		$this->last_response_headers = $this->curlParseHeaders($message_headers);
-
+		
 		return $message_body;
 	}
 
