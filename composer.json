@@ -15,7 +15,7 @@
         "minimum-stability": "dev"
     },
      "autoload": {
-        "psr-0": { "Shopify": "src/" }
+        "psr-0": { "erdiko\\shopify": "src/" }
     },
     "scripts": {
         "post-root-package-install": [
