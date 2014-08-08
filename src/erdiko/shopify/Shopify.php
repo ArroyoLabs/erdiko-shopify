@@ -1,5 +1,5 @@
 <?php
-namespace \erdiko\shopify;
+namespace erdiko\shopify;
 
 class Shopify {
 	public $shop_domain;
@@ -170,8 +170,8 @@ class Shopify {
 	}	
 }
 
-class ShopifyCurlException extends Exception { }
-class ShopifyApiException extends Exception
+class ShopifyCurlException extends \Exception { }
+class ShopifyApiException extends \Exception
 {
 	protected $method;
 	protected $path;
