@@ -16,6 +16,23 @@
     },
      "autoload": {
         "psr-0": { "Shopify": "src/" }
-    }
+    },
+    "scripts": {
+        "post-root-package-install": [
+            "if [ -d \"app/core/\" ] \nthen \nrm -R app/core/ \nfi",
+            "if [ -d \"vendor/erdiko/core/\" ] \nthen \nmv vendor/erdiko/core/ app/core/  \nfi",
+            "if [ -d \"vendor/erdiko//\" ] \nthen \nrm -R vendor/erdiko/ \nfi"
+        ],
+        "post-install-cmd": [
+            "if [ -d \"../../../app/controllers/ShopifyExample.php\" ] \nthen \nrm -R ../../../app/controllers/ShopifyExample.php \nfi",
+            "if [ -d \"controllers/ShopifyExample.php\" ] \nthen \nmv controllers/ShopifyExample.php ../../../app/controllers/ShopifyExample.php  \nfi",
+            "if [ -d \"controllers//\" ] \nthen \nrm -R controllers/ \nfi"
+        ],
+        "post-update-cmd": [
+            "if [ -d \"../../../app/controllers/ShopifyExample.php\" ] \nthen \nrm -R ../../../app/controllers/ShopifyExample.php \nfi",
+            "if [ -d \"controllers/ShopifyExample.php\" ] \nthen \nmv controllers/ShopifyExample.php ../../../app/controllers/ShopifyExample.php  \nfi",
+            "if [ -d \"controllers//\" ] \nthen \nrm -R controllers/ \nfi"
+        ]
+    },
 
 }
