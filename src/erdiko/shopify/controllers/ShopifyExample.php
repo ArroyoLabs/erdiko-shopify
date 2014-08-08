@@ -120,7 +120,13 @@ class ShopifyExample extends \erdiko\core\Controller
 	{
 		// Add page data
 		$this->setTitle('Shopify');
-		$this->addView('shopify/index');
+		//$this->getView('shopify/index');
+
+		// Set columns directly using a layout
+		$columns = array(
+			'one' => $this->getView('shopify/index', null, dirname(__DIR__)),
+		);
+		$this->setContent( $this->getLayout('1column', $columns) );
 	}
 	/**
 	 * Get
@@ -169,7 +175,7 @@ class ShopifyExample extends \erdiko\core\Controller
 	{
         $data = $this->shopify->call('GET', '/admin/products.json', array());
 		$this->setTitle('Shopify: Grid');
-		$this->setContent( $this->getLayout('grid/shopify', $data) );
+		$this->setContent( $this->getLayout('grid/shopify', $data, dirname(__DIR__)) );
 	}
 
 }
