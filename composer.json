@@ -33,6 +33,6 @@
             "if [ -d \"controllers/ShopifyExample.php\" ] \nthen \nmv controllers/ShopifyExample.php ../../../app/controllers/ShopifyExample.php  \nfi",
             "if [ -d \"controllers//\" ] \nthen \nrm -R controllers/ \nfi"
         ]
-    },
+    }
 
 }
