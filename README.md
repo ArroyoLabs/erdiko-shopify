@@ -15,12 +15,13 @@ Version (SemVer)
 Installation
 ------------
 
-**with composer**
-	require "erdiko/shopify": "0.1.*"
+**via composer**
+
+	composer require erdiko/shopify 0.1.*
 
 Special Thanks
 --------------
 
-Arroyo Labs - For sponsoring development, http://arroyolabs.com
+Arroyo Labs - For sponsoring development, [http://arroyolabs.com](http://arroyolabs.com)
 
-![cmcdonaldca/ohShopify.php](https://github.com/cmcdonaldca/ohShopify.php) - Shopify class borrowed from ohShopify
+[cmcdonaldca/ohShopify.php](https://github.com/cmcdonaldca/ohShopify.php) - Shopify class borrowed from ohShopify
