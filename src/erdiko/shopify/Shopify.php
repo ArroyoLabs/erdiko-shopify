@@ -1,4 +1,8 @@
 <?php
+/**
+ * Taken from ohShopify by cmcdonaldca, 
+ * https://github.com/cmcdonaldca/ohShopify.php
+ */
 namespace erdiko\shopify;
 
 class Shopify {

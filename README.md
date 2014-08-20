@@ -3,27 +3,24 @@ erdiko-shopify
 
 Shopify API Adapter
 
-* Use with or with Erdiko
+* Connect to the shopify API
+* Use with or without Erdiko
 * Convenient composer install
 
 Version (SemVer)
 ----------------
 
-1.0.5
+0.1.1
 
 Installation
 ------------
 
-**vai composer**
-	require "erdiko/shopify": "1.*"
-
+**with composer**
+	require "erdiko/shopify": "0.1.*"
 
 Special Thanks
 --------------
 
 Arroyo Labs - For sponsoring development, http://arroyolabs.com
 
-less - dynamic stylesheet language, http://lesscss.org
-
-Toro - PHP router (micro framework), http://toroweb.org
-
+![cmcdonaldca/ohShopify.php](https://github.com/cmcdonaldca/ohShopify.php) - Shopify class borrowed from ohShopify

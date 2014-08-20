@@ -1,11 +1,12 @@
 <?php
 /**
- * Examples Controller
- * Multiple examples of how you can use erdiko.  It includes some simple use cases.
+ * Example Shopify Controller
+ * Some examples of how to use the shopify API
  *
- * @category 	app
- * @package   	Example
+ * @category 	shopify
+ * @package   	example
  * @copyright	Copyright (c) 2014, Arroyo Labs, www.arroyolabs.com
+ * @author 		Coleman Tung, coleman@arroyolabs.com
  * @author 		John Arroyo, john@arroyolabs.com
  */
 namespace erdiko\shopify\controllers;
@@ -20,7 +21,7 @@ class ShopifyExample extends \erdiko\core\Controller
 	/** Cache Object */
 	private $cacheObj;
 	/** Shopify Object */
-	protected $shopify;
+	protected $_shopify;
 
 	/** Before */
 	public function _before()
@@ -52,20 +53,18 @@ class ShopifyExample extends \erdiko\core\Controller
 	            $pageURL .= $_SERVER["SERVER_NAME"].$_SERVER["REQUEST_URI"];
 	        }
 
-	        header("Location: " . $this->shopify->getAuthorizeUrl(self::returnScope(), $pageURL));
+	        header("Location: " . $this->_shopify->getAuthorizeUrl(self::returnScope(), $pageURL));
 		}
 
-			$this->shopify = new Shopify($this->cacheObj->get('shop'), "", self::returnApiKey(), self::returnSecret());
+		$this->_shopify = new Shopify($this->cacheObj->get('shop'), "", self::returnApiKey(), self::returnSecret());
 
-       		if(!$this->cacheObj->has('token'))
-        	{
-        		$token = $this->shopify->getAccessToken($this->cacheObj->get('code'));
-        		$this->cacheObj->put('token', $token);
-        	}
+   		if(!$this->cacheObj->has('token'))
+    	{
+    		$token = $this->_shopify->getAccessToken($this->cacheObj->get('code'));
+    		$this->cacheObj->put('token', $token);
+    	}
 
-        	$this->shopify->setToken($this->cacheObj->get('token'));
-
-
+    	$this->_shopify->setToken($this->cacheObj->get('token'));
 	}
 
 	/**
@@ -114,20 +113,14 @@ class ShopifyExample extends \erdiko\core\Controller
 
 
 	/**
-	 * Homepage Action (index)
+	 * Index Action
 	 */
 	public function getIndex()
 	{
-		// Add page data
-		$this->setTitle('Shopify');
-		//$this->getView('shopify/index');
-
-		// Set columns directly using a layout
-		$columns = array(
-			'one' => $this->getView('shopify/index', null, dirname(__DIR__)),
-		);
-		$this->setContent( $this->getLayout('1column', $columns) );
+		$this->setTitle('Shopify Example');
+		$this->setContent( $this->getView('shopify/index', null, dirname(__DIR__)) );
 	}
+
 	/**
 	 * Get
 	 *
@@ -166,7 +159,6 @@ class ShopifyExample extends \erdiko\core\Controller
 		$this->setTitle('Shopify: Orders');
 		$this->setContent( $this->getLayout('json', $data) );
 	}
-
 
 	/**
 	 * Get Product
