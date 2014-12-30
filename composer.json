@@ -1,6 +1,6 @@
 {
 	"name":"erdiko/shopify",
-    "description": "Erdiko Shopify Module",
+    "description": "Erdiko Shopify package",
     "keywords": ["framework", "erdiko", "erdiko-shopify"],
     "homepage": "http://erdiko.org",
     "license": "MIT",

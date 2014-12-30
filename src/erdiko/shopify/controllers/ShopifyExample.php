@@ -11,7 +11,7 @@
  */
 namespace erdiko\shopify\controllers;
 
-use erdiko\shopify\shopify;
+use erdiko\shopify\Shopify;
 
 /**
  * ShopifyExample Class  extends \erdiko\shopify\Shopify
