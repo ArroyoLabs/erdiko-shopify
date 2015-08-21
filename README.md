@@ -4,6 +4,7 @@ erdiko-shopify
 Shopify API Adapter
 
 * Connect to the shopify API
+* Works with your favorite MVC or Micro framework
 * Use with or without Erdiko
 * Convenient composer install
 

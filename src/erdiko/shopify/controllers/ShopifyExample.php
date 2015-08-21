@@ -11,11 +11,8 @@
  */
 namespace erdiko\shopify\controllers;
 
-use erdiko\shopify\Shopify;
+use erdiko\shopify\models\Shopify;
 
-/**
- * ShopifyExample Class  extends \erdiko\shopify\Shopify
- */
 class ShopifyExample extends \erdiko\core\Controller
 {
 	/** Cache Object */
