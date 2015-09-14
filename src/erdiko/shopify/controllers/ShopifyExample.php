@@ -5,45 +5,52 @@
  *
  * @category 	shopify
  * @package   	example
- * @copyright	Copyright (c) 2014, Arroyo Labs, www.arroyolabs.com
+ * @copyright	Copyright (c) 2015, Arroyo Labs, www.arroyolabs.com
  * @author 		Coleman Tung, coleman@arroyolabs.com
  * @author 		John Arroyo, john@arroyolabs.com
  */
 namespace erdiko\shopify\controllers;
 
-use erdiko\shopify\models\Shopify;
+use erdiko\shopify\Shopify;
 
+/**
+ * ShopifyExample Class  extends \erdiko\shopify\Shopify
+ */
 class ShopifyExample extends \erdiko\core\Controller
 {
 	/** Cache Object */
 	private $cacheObj;
 	/** Shopify Object */
-	protected $_shopify;
+	protected $shopify;
 
-	/** Before */
+	/** 
+	 * Before Action
+	 * @todo refactor and move to a model class
+	 */
 	public function _before()
 	{
 		$this->setThemeName('bootstrap');
 		$this->prepareTheme();
 
 		$this->cacheObj = \Erdiko::getCache();
+		// \Erdiko::log(null, "GET: ".print_r($_GET, true));
 
 		if(isset($_GET['code']))
 		{
-			$this->cacheObj->put('code', $_GET['code']);
+			$this->cacheObj->put('code', $_GET['code']); // @todo need to better namespace the cache
 			$this->cacheObj->put('shop', $_GET['shop']);
 		}
 
 		if(!$this->cacheObj->has('code'))
 		{
-			$shop = self::returnSite();
+			$shop = $this->returnSite();
 			//var_dump($shop);
 			$this->cacheObj->put('shop', $shop);
-			$this->shopify = new Shopify($shop, "", self::returnApiKey(), self::returnSecret());
+			$this->shopify = new Shopify($shop, "", $this->returnApiKey(), $this->returnSecret());
         	// get the URL to the current page
         
       		$pageURL = 'http';
-	       // if ($_SERVER["HTTPS"] == "on") { $pageURL .= "s"; }
+	       	// if ($_SERVER["HTTPS"] == "on") { $pageURL .= "s"; }
 	        $pageURL .= "://";
 	        if ($_SERVER["SERVER_PORT"] != "80") {
 	            $pageURL .= $_SERVER["SERVER_NAME"].":".$_SERVER["SERVER_PORT"].$_SERVER["REQUEST_URI"];
@@ -51,18 +58,27 @@ class ShopifyExample extends \erdiko\core\Controller
 	            $pageURL .= $_SERVER["SERVER_NAME"].$_SERVER["REQUEST_URI"];
 	        }
 
-	        header("Location: " . $this->_shopify->getAuthorizeUrl(self::returnScope(), $pageURL));
-		}
+	        // Redirect to Shopfy to get authorization
+	        header("Location: " . $this->shopify->getAuthorizeUrl($this->returnScope(), $pageURL)); 
+	    }
 
-		$this->_shopify = new Shopify($this->cacheObj->get('shop'), "", self::returnApiKey(), self::returnSecret());
+		$this->shopify = new Shopify($this->cacheObj->get('shop'), "", $this->returnApiKey(), $this->returnSecret());
 
-   		if(!$this->cacheObj->has('token'))
+		// Check for an existing token, if not present request one using the code
+   		if(empty($this->cacheObj->get('token')))
     	{
-    		$token = $this->_shopify->getAccessToken($this->cacheObj->get('code'));
+    		$token = $this->shopify->getAccessToken($this->cacheObj->get('code'));
     		$this->cacheObj->put('token', $token);
     	}
 
-    	$this->_shopify->setToken($this->cacheObj->get('token'));
+    	/*
+    	\Erdiko::log(null, "code: ".$this->cacheObj->get('code'));
+    	\Erdiko::log(null, "shop: ".$this->cacheObj->get('shop'));
+    	\Erdiko::log(null, "token: ".$this->cacheObj->get('token'));
+		*/
+    	
+    	// Set the token within shopify so we can use the API
+    	$this->shopify->setToken($this->cacheObj->get('token'));
 	}
 
 	/**
