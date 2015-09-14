@@ -38,6 +38,7 @@ class ShopifyExample extends \erdiko\core\Controller
 		{
 			$shop = self::returnSite();
 			//var_dump($shop);
+			$this->cacheObj->put('shop', $shop);
 			$this->shopify = new Shopify($shop, "", self::returnApiKey(), self::returnSecret());
         	// get the URL to the current page
         
