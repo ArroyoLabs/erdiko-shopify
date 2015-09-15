@@ -32,14 +32,17 @@ class ShopifyExample extends \erdiko\core\Controller
 		$this->cacheObj = \Erdiko::getCache();
 		// \Erdiko::log(null, "GET: ".print_r($_GET, true));
 
+		\Erdiko::log(null, "code (0): ".$this->cacheObj->get('shopify_code'));
+    	\Erdiko::log(null, "shop (0): ".$this->cacheObj->get('shopify_shop'));
+    	\Erdiko::log(null, "token (0): ".$this->cacheObj->get('shopify_token'));
+
 		if(isset($_GET['code']))
 		{
 			$this->cacheObj->put('shopify_code', $_GET['code']);
 			$this->cacheObj->put('shopify_shop', $_GET['shop']);
 		}
 
-		if(!$this->cacheObj->has('shopify_code'))
-		{
+		if(empty($this->cacheObj->get('shopify_code'))) {
 			$shop = $this->returnSite();
 			//var_dump($shop);
 			$this->cacheObj->put('shopify_shop', $shop);
@@ -68,9 +71,9 @@ class ShopifyExample extends \erdiko\core\Controller
     		$this->cacheObj->put('shopify_token', $token);
     	}
 
-    	\Erdiko::log(null, "code: ".$this->cacheObj->get('shopify_code'));
-    	\Erdiko::log(null, "shop: ".$this->cacheObj->get('shopify_shop'));
-    	\Erdiko::log(null, "token: ".$this->cacheObj->get('shopify_token'));
+    	\Erdiko::log(null, "code (1): ".$this->cacheObj->get('shopify_code'));
+    	\Erdiko::log(null, "shop (1): ".$this->cacheObj->get('shopify_shop'));
+    	\Erdiko::log(null, "token (1): ".$this->cacheObj->get('shopify_token'));
 
     	// Set the token within shopify so we can use the API
     	$this->shopify->setToken($this->cacheObj->get('shopify_token'));

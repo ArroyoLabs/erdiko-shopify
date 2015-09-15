@@ -1,13 +1,14 @@
 <?php
 /**
- * Shopify API Exception
- * 
- * Original class borrowed from ohShopify by cmcdonaldca, 
- * https://github.com/cmcdonaldca/ohShopify.php
+ * ShopifyApiException
+ * API exception
+ * Original from ohShopify by cmcdonaldca, https://github.com/cmcdonaldca/ohShopify.php
+ *
+ * @category 	shopify
  * @copyright	Copyright (c) 2015, Arroyo Labs, www.arroyolabs.com
  * @author 		John Arroyo, john@arroyolabs.com
  */
-namespace erdiko\shopify\models;
+namespace erdiko\shopify;
 
 class ShopifyApiException extends \Exception
 {
@@ -17,7 +18,7 @@ class ShopifyApiException extends \Exception
 	protected $response_headers;
 	protected $response;
 	
-	public function __construct($method, $path, $params, $response_headers, $response)
+	function __construct($method, $path, $params, $response_headers, $response)
 	{
 		$this->method = $method;
 		$this->path = $path;
@@ -28,25 +29,28 @@ class ShopifyApiException extends \Exception
 		parent::__construct($response_headers['http_status_message'], $response_headers['http_status_code']);
 	}
 
-	public function getMethod()
+	function getMethod()
 	{
 		return $this->method;
 	}
 
-	public function getPath() {
+	function getPath() 
+	{
 		return $this->path;
 	}
 
-	public function getParams() 
+	function getParams() 
 	{
 		return $this->params;
 	}
-
-	public function getResponseHeaders() {
+	
+	function getResponseHeaders() 
+	{
 		return $this->response_headers;
 	}
 
-	public function getResponse() {
+	function getResponse()
+	{
 		return $this->response;
 	}
 }

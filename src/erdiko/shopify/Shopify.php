@@ -1,14 +1,9 @@
 <?php
 /**
- * Shopify model - all models that need to shopify access should extend this class
- * 
- * Original class borrowed from ohShopify by cmcdonaldca, 
+ * Taken from ohShopify by cmcdonaldca, 
  * https://github.com/cmcdonaldca/ohShopify.php
- * @copyright	Copyright (c) 2015, Arroyo Labs, www.arroyolabs.com
- * @author 		Coleman Tung, coleman@arroyolabs.com
- * @author 		John Arroyo, john@arroyolabs.com
  */
-namespace erdiko\shopify\models;
+namespace erdiko\shopify;
 
 class Shopify {
 	public $shop_domain;
@@ -23,6 +18,8 @@ class Shopify {
 		$this->token = $token;
 		$this->api_key = $api_key;
 		$this->secret = $secret;
+
+		\Erdiko::log(null, "$shop_domain, $token, $api_key, $secret");
 	}
 
 	public function setToken($token)
@@ -40,19 +37,21 @@ class Shopify {
 		return $url;
 	}
 
-	/**
-	 * Once the User has authorized the app, call this with the code to get the access token
-	 */
+	// Once the User has authorized the app, call this with the code to get the access token
 	public function getAccessToken($code) {
 		// POST to  POST https://SHOP_NAME.myshopify.com/admin/oauth/access_token
 		$url = "https://{$this->shop_domain}/admin/oauth/access_token";
 		$payload = "client_id={$this->api_key}&client_secret={$this->secret}&code=$code";
+		// error_log("url.payload: ".$url.$payload);
+
 		$response = $this->curlHttpApiRequest('POST', $url, '', $payload, array());
+		// error_log("response: ".print_r($response, true));
 		$response = json_decode($response, true);
+		// error_log("response decoded: ".print_r($response, true));
 
-		$returnVal = isset($response['access_token']) ? $response['access_token'] : '';
-
-		return $returnVal;
+		if (isset($response['access_token']))
+			return $response['access_token'];
+		return '';
 	}
 
 	public function callsMade()
@@ -77,7 +76,7 @@ class Shopify {
 		$query = in_array($method, array('GET','DELETE')) ? $params : array();
 		$payload = in_array($method, array('POST','PUT')) ? stripslashes(json_encode($params)) : array();
 		$request_headers = in_array($method, array('POST','PUT')) ? array("Content-Type: application/json; charset=utf-8", 'Expect:') : array();
-		//var_dump($this->token);
+
 		// add auth headers
 		$request_headers[] = 'X-Shopify-Access-Token: ' . $this->token;
 		$response = $this->curlHttpApiRequest($method, $url, $query, $payload, $request_headers);
@@ -108,9 +107,6 @@ class Shopify {
 
 	private function curlHttpApiRequest($method, $url, $query='', $payload='', $request_headers=array())
 	{
-		//echo "Message Body";
-		//var_dump($method);
-		//var_dump($url);
 		$url = $this->curlAppendQuery($url, $query);
 		$ch = curl_init($url);
 		$this->curlSetopts($ch, $method, $payload, $request_headers);
@@ -120,7 +116,7 @@ class Shopify {
 		curl_close($ch);
 
 		if ($errno) throw new ShopifyCurlException($error, $errno);
-			list($message_headers, $message_body) = preg_split("/\r\n\r\n|\n\n|\r\r/", $response, 2);
+		list($message_headers, $message_body) = preg_split("/\r\n\r\n|\n\n|\r\r/", $response, 2);
 		$this->last_response_headers = $this->curlParseHeaders($message_headers);
 		
 		return $message_body;
@@ -128,17 +124,9 @@ class Shopify {
 
 	private function curlAppendQuery($url, $query)
 	{
-		$queryUrl = null;
-
-		if (empty($query)) {
-			$queryUrl = $url;
-		} if (is_array($query)) {
-			$queryUrl = "$url?".http_build_query($query);
-		} else {
-			$queryUrl = "$url?$query";
-		}
-
-		return $queryUrl;
+		if (empty($query)) return $url;
+		if (is_array($query)) return "$url?".http_build_query($query);
+		else return "$url?$query";
 	}
 
 	private function curlSetopts($ch, $method, $payload, $request_headers)
@@ -154,13 +142,11 @@ class Shopify {
 		curl_setopt($ch, CURLOPT_TIMEOUT, 30);
 
 		curl_setopt ($ch, CURLOPT_CUSTOMREQUEST, $method);
-		if (!empty($request_headers))
-			curl_setopt($ch, CURLOPT_HTTPHEADER, $request_headers);
+		if (!empty($request_headers)) curl_setopt($ch, CURLOPT_HTTPHEADER, $request_headers);
 		
 		if ($method != 'GET' && !empty($payload))
 		{
-			if (is_array($payload))
-				$payload = http_build_query($payload);
+			if (is_array($payload)) $payload = http_build_query($payload);
 			curl_setopt ($ch, CURLOPT_POSTFIELDS, $payload);
 		}
 	}
@@ -188,5 +174,5 @@ class Shopify {
 		}
 		$params = explode('/', $this->last_response_headers['http_x_shopify_shop_api_call_limit']);
 		return (int) $params[$index];
-	}	
+	}
 }
