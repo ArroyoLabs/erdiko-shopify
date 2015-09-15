@@ -5,7 +5,7 @@
  *
  * @category 	shopify
  * @package   	example
- * @copyright	Copyright (c) 2015, Arroyo Labs, www.arroyolabs.com
+ * @copyright	Copyright (c) 2014, Arroyo Labs, www.arroyolabs.com
  * @author 		Coleman Tung, coleman@arroyolabs.com
  * @author 		John Arroyo, john@arroyolabs.com
  */
@@ -23,10 +23,7 @@ class ShopifyExample extends \erdiko\core\Controller
 	/** Shopify Object */
 	protected $shopify;
 
-	/** 
-	 * Before Action
-	 * @todo refactor and move to a model class
-	 */
+	/** Before */
 	public function _before()
 	{
 		$this->setThemeName('bootstrap');
@@ -37,15 +34,15 @@ class ShopifyExample extends \erdiko\core\Controller
 
 		if(isset($_GET['code']))
 		{
-			$this->cacheObj->put('code', $_GET['code']); // @todo need to better namespace the cache
-			$this->cacheObj->put('shop', $_GET['shop']);
+			$this->cacheObj->put('shopify_code', $_GET['code']);
+			$this->cacheObj->put('shopify_shop', $_GET['shop']);
 		}
 
-		if(!$this->cacheObj->has('code'))
+		if(!$this->cacheObj->has('shopify_code'))
 		{
 			$shop = $this->returnSite();
 			//var_dump($shop);
-			$this->cacheObj->put('shop', $shop);
+			$this->cacheObj->put('shopify_shop', $shop);
 			$this->shopify = new Shopify($shop, "", $this->returnApiKey(), $this->returnSecret());
         	// get the URL to the current page
         
@@ -62,23 +59,21 @@ class ShopifyExample extends \erdiko\core\Controller
 	        header("Location: " . $this->shopify->getAuthorizeUrl($this->returnScope(), $pageURL)); 
 	    }
 
-		$this->shopify = new Shopify($this->cacheObj->get('shop'), "", $this->returnApiKey(), $this->returnSecret());
+		$this->shopify = new Shopify($this->cacheObj->get('shopify_shop'), "", $this->returnApiKey(), $this->returnSecret());
 
 		// Check for an existing token, if not present request one using the code
-   		if(empty($this->cacheObj->get('token')))
+   		if(empty($this->cacheObj->get('shopify_token')))
     	{
-    		$token = $this->shopify->getAccessToken($this->cacheObj->get('code'));
-    		$this->cacheObj->put('token', $token);
+    		$token = $this->shopify->getAccessToken($this->cacheObj->get('shopify_code'));
+    		$this->cacheObj->put('shopify_token', $token);
     	}
 
-    	/*
-    	\Erdiko::log(null, "code: ".$this->cacheObj->get('code'));
-    	\Erdiko::log(null, "shop: ".$this->cacheObj->get('shop'));
-    	\Erdiko::log(null, "token: ".$this->cacheObj->get('token'));
-		*/
-    	
+    	\Erdiko::log(null, "code: ".$this->cacheObj->get('shopify_code'));
+    	\Erdiko::log(null, "shop: ".$this->cacheObj->get('shopify_shop'));
+    	\Erdiko::log(null, "token: ".$this->cacheObj->get('shopify_token'));
+
     	// Set the token within shopify so we can use the API
-    	$this->shopify->setToken($this->cacheObj->get('token'));
+    	$this->shopify->setToken($this->cacheObj->get('shopify_token'));
 	}
 
 	/**
