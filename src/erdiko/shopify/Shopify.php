@@ -18,6 +18,8 @@ class Shopify {
 		$this->token = $token;
 		$this->api_key = $api_key;
 		$this->secret = $secret;
+
+		\Erdiko::log(null, "$shop_domain, $token, $api_key, $secret");
 	}
 
 	public function setToken($token)
@@ -40,10 +42,13 @@ class Shopify {
 		// POST to  POST https://SHOP_NAME.myshopify.com/admin/oauth/access_token
 		$url = "https://{$this->shop_domain}/admin/oauth/access_token";
 		$payload = "client_id={$this->api_key}&client_secret={$this->secret}&code=$code";
-		//echo $url.$payload;
+		// error_log("url.payload: ".$url.$payload);
+
 		$response = $this->curlHttpApiRequest('POST', $url, '', $payload, array());
-		//var_dump($response);
+		// error_log("response: ".print_r($response, true));
 		$response = json_decode($response, true);
+		// error_log("response decoded: ".print_r($response, true));
+
 		if (isset($response['access_token']))
 			return $response['access_token'];
 		return '';
@@ -71,12 +76,13 @@ class Shopify {
 		$query = in_array($method, array('GET','DELETE')) ? $params : array();
 		$payload = in_array($method, array('POST','PUT')) ? stripslashes(json_encode($params)) : array();
 		$request_headers = in_array($method, array('POST','PUT')) ? array("Content-Type: application/json; charset=utf-8", 'Expect:') : array();
-		//var_dump($this->token);
+
 		// add auth headers
 		$request_headers[] = 'X-Shopify-Access-Token: ' . $this->token;
 		$response = $this->curlHttpApiRequest($method, $url, $query, $payload, $request_headers);
 		$response = json_decode($response, true);
 		//var_dump($response);
+
 		if (isset($response['errors']) or ($this->last_response_headers['http_status_code'] >= 400))
 			throw new ShopifyApiException($method, $path, $params, $this->last_response_headers, $response);
 
@@ -101,9 +107,6 @@ class Shopify {
 
 	private function curlHttpApiRequest($method, $url, $query='', $payload='', $request_headers=array())
 	{
-		//echo "Message Body";
-		//var_dump($method);
-		//var_dump($url);
 		$url = $this->curlAppendQuery($url, $query);
 		$ch = curl_init($url);
 		$this->curlSetopts($ch, $method, $payload, $request_headers);
@@ -171,33 +174,5 @@ class Shopify {
 		}
 		$params = explode('/', $this->last_response_headers['http_x_shopify_shop_api_call_limit']);
 		return (int) $params[$index];
-	}	
-}
-
-class ShopifyCurlException extends \Exception { }
-class ShopifyApiException extends \Exception
-{
-	protected $method;
-	protected $path;
-	protected $params;
-	protected $response_headers;
-	protected $response;
-	
-	function __construct($method, $path, $params, $response_headers, $response)
-	{
-		$this->method = $method;
-		$this->path = $path;
-		$this->params = $params;
-		$this->response_headers = $response_headers;
-		$this->response = $response;
-		
-		parent::__construct($response_headers['http_status_message'], $response_headers['http_status_code']);
 	}
-
-	function getMethod() { return $this->method; }
-	function getPath() { return $this->path; }
-	function getParams() { return $this->params; }
-	function getResponseHeaders() { return $this->response_headers; }
-	function getResponse() { return $this->response; }
 }
-?>
