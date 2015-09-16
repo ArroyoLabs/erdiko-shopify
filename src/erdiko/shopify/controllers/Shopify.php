@@ -96,7 +96,6 @@ class Shopify extends \erdiko\core\Controller
 	{
 		$customer = new \erdiko\shopify\models\Customer;
 		$data = $customer->getCustomers();
-
 		$this->setTitle('Shopify Customers');
 		$this->setContent( $this->getLayout('json', $data) );
 	}
@@ -108,7 +107,6 @@ class Shopify extends \erdiko\core\Controller
 	{
 		$order = new \erdiko\shopify\models\Order;
 		$data = $order->getOrders();
-
 		$this->setTitle('Shopify Orders');
 		$this->setContent( $this->getLayout('json', $data) );
 	}
@@ -120,9 +118,87 @@ class Shopify extends \erdiko\core\Controller
 	{
         $product = new \erdiko\shopify\models\Product;
 		$data = $product->getProducts();
-
 		$this->setTitle('Shopify Product Grid');
 		$this->setContent( $this->getLayout('grid/shopify', $data, dirname(__DIR__)) );
+	}
+
+	/**
+	 * Create Metafield for a product
+	 */
+	public function getCreateProductMetaField()
+	{
+		$metafield = new \erdiko\shopify\models\Metafield;
+		$productID=$_GET['product_id'];
+		$args=array(
+			"metafield"=>array("namespace" => "inventory",
+    		"key" => $_GET['key'],
+    		"value"=> $_GET['value'],
+    		"value_type" =>$_GET['value_type'])
+			);
+
+		$metafield->setProductMetaField($productID,$args);
+	}
+
+	/**
+	 * Get Metafields of a product
+	 */
+	public function getProductMetaFields()
+	{
+		$metafield = new \erdiko\shopify\models\Metafield;	
+		$productID=$_GET['product_id'];
+		$data=$metafield->getProductMetaFields($productID);
+		$this->setTitle('Shopify: Metafields');
+		$this->setContent( $this->getLayout('grid/metaDataListing', $data, dirname(__DIR__)) );
+	}
+
+	/**
+	 * Edit Metafield of a product
+	 */
+	public function getEditProductMetaField()
+	{
+		$metafield = new \erdiko\shopify\models\Metafield;
+		$productID=$_GET['product_id'];
+		$metaFieldID=$_GET['id'];
+		$args=array(
+			"metafield"=>array(
+			"id" => $_GET['id'],
+    		"value"=> $_GET['value'],
+    		"value_type"=>$_GET['value_type'])
+			);
+		$data=$metafield->updateProductMetaField($productID,$metaFieldID,$args);
+	}
+
+	/**
+	 * Delete Metafield of a product
+	 */
+	public function getDeleteProductMetaData(){
+		$metafield = new \erdiko\shopify\models\Metafield;
+		$productID=$_GET['product_id'];
+		$metaFieldID=$_GET['id'];
+		$metafield->deleteProductMetaField($productID,$metaFieldID,array());
+	}
+
+	/**
+	 * Show the userform to edit the Metafields
+	 */
+	public function getShowEdit(){
+		$data=array(
+			"product_id"=>$_GET['product_id'],
+			"id"=>$_GET['id'],
+			"key"=>$_GET['key'],
+			"value"=>$_GET['value'],
+			"value_type"=>$_GET['value_type']);
+		$this->setTitle('Edit Meta Data Fields');
+		$this->setContent( $this->getView('shopify/editForm',$data, dirname(__DIR__)) );
+	}
+
+	/**
+	 * Show the userform to add Metafield of a product
+	 */
+	public function getShowForm(){
+		$data=$_GET['product_id'];
+		$this->setTitle('Create New Meta Field');
+		$this->setContent($this->getView('shopify/formView',$data,dirname(__DIR__)));
 	}
 
 }
