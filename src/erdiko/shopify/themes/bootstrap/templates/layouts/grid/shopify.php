@@ -11,7 +11,8 @@
 					'details' => array(
 							'name' => $data[$i]['title'],
 							'image' => $data[$i]['image']['src'],
-							'url' => "#"
+							'url' => "#",
+							'product_id' => $data[$i]['id']
 							)
 					);
 					//echo $this->_viewRootFolder;

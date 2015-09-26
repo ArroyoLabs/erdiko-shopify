@@ -38,4 +38,33 @@ class Metafield extends ShopifyAbstract
     {
         return $this->getShopify()->call('POST', '/admin/metafields.json', $options);
     }
+
+    /**
+     * Set product level Metafield
+     */
+    public function setProductMetaField($productID,$args){
+        
+        return $this->getShopify()->call('POST', '/admin/products/'.$productID.'/metafields.json', $args);
+    }
+
+    /**
+     * Get Product level Metafields
+     */
+    public function getProductMetaFields($productID){ 
+        return $this->getShopify()->call('GET', '/admin/products/'.$productID.'/metafields.json',array());
+    }
+
+    /**
+     * Update product level Metafield
+     */
+    public function updateProductMetaField($productID,$metaFieldID,$args){
+        return $this->getShopify()->call('PUT', '/admin/products/'.$productID.'/metafields/'.$metaFieldID.'.json', $args);
+    }
+
+    /**
+     * Delete product level Metafield
+     */
+    public function deleteProductMetaField($productID,$metaFieldID,$args){
+        return $this->getShopify()->call('DELETE', '/admin/products/'.$productID.'/metafields/'.$metaFieldID.'.json', $args);
+    }
 }

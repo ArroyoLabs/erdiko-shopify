@@ -9,4 +9,6 @@
       <h2 class="grid"><a href="<?php echo $data['details']['url']; ?>"><?php echo $data['details']['name']; ?></a></h2>
     </figcaption>
   </figure>
+  
+   <a href="<?php echo '/shopify/productMetaFields?product_id='.$data['details']['product_id']; ?>">Display MetaFields</a>
 </div>
