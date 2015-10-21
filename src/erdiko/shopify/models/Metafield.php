@@ -33,6 +33,14 @@ class Metafield extends ShopifyAbstract
         return $this->getShopify()->call('GET', '/admin/metafields.json', $options);
     }
 
+     /**
+     * Get store level metafield by ID
+     */
+    public function getMetafieldByID($ID)
+    {
+        return $this->getShopify()->call('GET', '/admin/metafields/'.$ID.'.json', array());
+    }
+
     /**
      * Set store level metafields
      */
@@ -40,8 +48,7 @@ class Metafield extends ShopifyAbstract
     {
         return $this->getShopify()->call('POST', '/admin/metafields.json', $options);
     }
-    //newly added
-
+    
      /**
      * Update store level Metafield
      */
@@ -56,7 +63,6 @@ class Metafield extends ShopifyAbstract
         return $this->getShopify()->call('DELETE', '/admin/metafields/'.$metaFieldID.'.json', array());
     }
 
-    // newly added ends
 
     /**
      * Set product level Metafield
@@ -64,6 +70,15 @@ class Metafield extends ShopifyAbstract
     public function setProductMetaField($productID,$args){
         
         return $this->getShopify()->call('POST', '/admin/products/'.$productID.'/metafields.json', $args);
+    }
+
+   
+    /**
+     * get product level Metafield
+     */
+    public function getProductMetaFieldByID($productID,$metaID){
+        
+        return $this->getShopify()->call('GET', '/admin/products/'.$productID.'/metafields/'.$metaID.'.json', array());
     }
 
     /**
@@ -97,6 +112,14 @@ class Metafield extends ShopifyAbstract
     {
 
         return $this->getShopify()->call('PUT', '/admin/blogs/'.$blogID.'.json', $args);
+    }
+
+    /**
+     * get blog level Metafield by ID
+     */
+    public function getBlogMetaFieldByID($blogID,$metaID){
+        
+        return $this->getShopify()->call('GET', '/admin/blogs/'.$blogID.'/metafields/'.$metaID.'.json', array());
     }
 
     /**

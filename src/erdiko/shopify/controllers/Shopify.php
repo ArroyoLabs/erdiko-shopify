@@ -223,7 +223,7 @@ class Shopify extends \erdiko\core\Controller
 		$metafield = new \erdiko\shopify\models\Metafield;
 		$productID=$_GET['product_id'];
 		$args=array(
-			"metafield"=>array("namespace" => "inventory",
+			"metafield"=>array("namespace" => $metafields-> getNamespace(),
     		"key" => $_GET['key'],
     		"value"=> $_GET['value'],
     		"value_type" =>$_GET['value_type'])
