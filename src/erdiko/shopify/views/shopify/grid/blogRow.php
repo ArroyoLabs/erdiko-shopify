@@ -3,7 +3,7 @@
 	<col width="50">
     <col width="130">
     <col width="130">
-     <col width="80">
+     <col width="130">
 		<tr>
 			<td>
 				<p>
@@ -12,24 +12,20 @@
 			</td>
 			<td>
 				<p>
-					<?php echo $data['details']['key']; ?>
+					<?php echo $data['details']['title']; ?>
 				</p> 
 			</td>
 			<td>
 				<p>
-					<?php echo $data['details']['value']; ?>
-				</p> 
-			</td>
-			<td>
-				<p>
-					<a href="<?php echo $data['details']['edit']; ?>">EDIT</a>
+					<a href="<?php echo $data['details']['metafields']; ?>">Show Metafields</a>
 				</p>
 			</td>
 			<td>
 				<p>
-					<a href="<?php echo $data['details']['delete']; ?>">DELETE</a>
+					<a href="<?php echo $data['details']['articles']; ?>">Show Articles</a>
 				</p>
 			</td>
+			
 		</tr>
 	</table>
 </div>

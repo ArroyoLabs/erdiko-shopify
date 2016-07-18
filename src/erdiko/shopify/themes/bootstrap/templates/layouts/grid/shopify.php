@@ -1,6 +1,9 @@
+<div><h><b><u> Products: </u></b></h></div>
+</br></br>
 <div class="container-fluid">
       <div class="row">
         <div role="main">
+
         	<?php
         		$data = $data->getData(); // temporary hack
 
@@ -17,6 +20,7 @@
 					);
 					//echo $this->_viewRootFolder;
 					echo Erdiko::getView('shopify/grid/item', $item, $this->_viewRootFolder);
+					//echo "</br>";
 				}
 			?>
         </div>
