@@ -3,14 +3,14 @@ erdiko-shopify
 
 Shopify API Adapter
 
-* Connect to the shopify API
+* Connect to the shopify API via Guzzle
 * Use with or without Erdiko
 * Convenient composer install
 
 Version (SemVer)
 ----------------
 
-0.1.3
+0.1.4
 
 Installation
 ------------
@@ -26,7 +26,6 @@ To connect to shopify you can use the \erdiko\shopify\Shopify class to connect t
 
 If you are using erdiko you can leverage our service models and sample app to jumpstart your development.
 
-[include specific erdiko instructions here...]
 
 Special Thanks
 --------------

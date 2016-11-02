@@ -1,12 +1,12 @@
 {
      "appInfo":{        
-         "SHOPIFY_API_KEY": "4813e456510e65c25db07e074b4a69a7",
-         "SHOPIFY_SECRET": "cc73dbb52abfd4fef0dd12e4d4bc2d05",
+         "SHOPIFY_API_KEY": "0ccc51f561a9632a35c740a34736ade2",
+         "SHOPIFY_SECRET": "0171f581853965819afd17ebf7e15983",
          "SHOPIFY_SCOPE": "write_products,write_orders,write_customers"
      },
      "shop":{
-         "uri": "beshbox.myshopify.com",
-         "erdiko": "beshbox.myshopify.com",
-         "app": "http://local.erdiko.org/shop/index"
+         "uri": "erdiko.myshopify.com",
+         "erdiko": "erdiko.myshopify.com",
+         "app": "http://docker.local/shop/index"
      }
 }

@@ -1,6 +1,6 @@
 {
 	"name":"erdiko/shopify",
-    "description": "Erdiko Shopify package",
+    "description": "Erdiko Shopify Package",
     "keywords": ["framework", "erdiko", "erdiko-shopify"],
     "homepage": "http://erdiko.org",
     "license": "MIT",
@@ -10,12 +10,15 @@
             "email": "info@arroyolabs.com"
         }
     ],
+    "require": {
+        "guzzlehttp/guzzle": "~6.0"
+    },
     "config": {
         "vendor-dir": "vendor",
         "minimum-stability": "dev"
     },
      "autoload": {
-        "psr-0": { "erdiko\\shopify": "src/" }
+        "psr-4": { "erdiko\\shopify": "src/" }
     }
 
 }
