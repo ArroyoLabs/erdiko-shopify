@@ -1,8 +1,8 @@
-<div class="container-fluid">
-      <div class="row">
-        <div role="main">
+<div class="container">
+    <div class="row">
+      <div class="col-xs-12">
         	<?php
-        		$data = $data->getData(); // temporary hack
+        		$data = $this->getRegions();
 
 				for($i=0; $i<count($data); $i++)
 				{
@@ -11,15 +11,12 @@
 					'details' => array(
 							'name' => $data[$i]['title'],
 							'image' => $data[$i]['image']['src'],
-							'url' => "#",
-							'product_id' => $data[$i]['id']
+							'url' => "#"
 							)
 					);
-					//echo $this->_viewRootFolder;
 					echo Erdiko::getView('shopify/grid/item', $item, $this->_viewRootFolder);
 				}
 			?>
-        </div>
-  	</div>
+      </div>
+    </div>
 </div>
-

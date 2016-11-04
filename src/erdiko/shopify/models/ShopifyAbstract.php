@@ -40,7 +40,7 @@ abstract class ShopifyAbstract
      */
     private function getConfig()
     {
-        $config = \Erdiko::getConfig('local/shopify');
+        $config = \Erdiko::getConfig('shared/shopify');
         return $config;
     }
 

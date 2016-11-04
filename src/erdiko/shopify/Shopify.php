@@ -19,9 +19,7 @@ class Shopify {
 		$this->api_key = $api_key;
 		$this->secret = $secret;
 
-		if (class_exists('Erdiko')) {
 			\Erdiko::log(null, "$shop_domain, $token, $api_key, $secret");
-		}
 	}
 
 	public function setToken($token)

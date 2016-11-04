@@ -18,4 +18,13 @@ class Order extends ShopifyAbstract
     {
         return $this->getShopify()->call('GET', '/admin/orders.json', $options);
     }
+
+    public function getOrderByID($orderID)
+    {
+    	return $this->getShopify()->call('GET', '/admin/orders/'.$orderID.'.json', array());
+    }
+
+    public function createOrder($data=array()){
+        return $this->getShopify()->call('POST', '/admin/orders.json',$data);
+    }
 }
