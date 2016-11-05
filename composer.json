@@ -18,7 +18,7 @@
         "minimum-stability": "dev"
     },
      "autoload": {
-        "psr-4": { "erdiko\\shopify": "src/" }
+        "psr-0": { "erdiko\\shopify": "src/" }
     }
 
 }
