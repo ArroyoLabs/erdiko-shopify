@@ -6,13 +6,25 @@
 namespace erdiko\shopify;
 
 class Shopify {
+
 	public $shop_domain;
+
 	private $token;
+
 	private $api_key;
+
 	private $secret;
+
 	private $last_response_headers = null;
 
-	public function __construct($shop_domain, $token, $api_key, $secret) {
+    private $client;
+
+    /**
+     *
+     *
+     */
+    public function __construct($shop_domain, $token, $api_key, $secret) 
+    {
 		$this->name = "ShopifyClient";
 		$this->shop_domain = $shop_domain;
 		$this->token = $token;
@@ -22,6 +34,10 @@ class Shopify {
 			\Erdiko::log(null, "$shop_domain, $token, $api_key, $secret");
 	}
 
+    /**
+     *
+     *
+     */
 	public function setToken($token)
 	{
 		$this->token = $token;
@@ -98,7 +114,9 @@ class Shopify {
 		$payload = in_array($method, array('POST','PUT')) ? stripslashes(json_encode($params)) : array();
 		$request_headers = in_array($method, array('POST','PUT')) ? array("Content-Type: application/json; charset=utf-8", 'Expect:') : array();
 
+		$request_headers = in_array($method, array('POST','PUT')) ? array("Content-Type: application/json; charset=utf-8", 'Expect:') : array();
 		// add auth headers
+
 		$request_headers[] = 'X-Shopify-Access-Token: ' . $this->token;
 		$response = $this->curlHttpApiRequest($method, $url, $query, $payload, $request_headers);
 		$response = json_decode($response, true);
