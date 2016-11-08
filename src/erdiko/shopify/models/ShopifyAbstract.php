@@ -16,8 +16,13 @@ use erdiko\shopify\Shopify;
 abstract class ShopifyAbstract
 {
     protected $cacheObj; // Cache Object
+
     protected $shopify; // Shopify object
 
+    /**
+     *
+     *
+     */
     public function __construct()
     {
         $this->setShopifyObjectNew();

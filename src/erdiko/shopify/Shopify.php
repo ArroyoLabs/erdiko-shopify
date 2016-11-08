@@ -27,8 +27,12 @@ class Shopify {
 		$this->token = $token;
 	}
 
-	// Get the URL required to request authorization
-	public function getAuthorizeUrl($scope, $redirect_url='') {
+    /**
+     * Get the URL required to request authorization
+     *
+     */
+    public function getAuthorizeUrl($scope, $redirect_url='') 
+    {
 		$url = "http://{$this->shop_domain}/admin/oauth/authorize?client_id={$this->api_key}&scope=" . urlencode($scope);
 		if ($redirect_url != '')
 		{
@@ -37,38 +41,55 @@ class Shopify {
 		return $url;
 	}
 
-	// Once the User has authorized the app, call this with the code to get the access token
-	public function getAccessToken($code) {
+    /**
+     * Once the User has authorized the app, call this with the code to get the access token
+     *
+     */
+    public function getAccessToken($code) 
+    {
 		// POST to  POST https://SHOP_NAME.myshopify.com/admin/oauth/access_token
 		$url = "https://{$this->shop_domain}/admin/oauth/access_token";
 		$payload = "client_id={$this->api_key}&client_secret={$this->secret}&code=$code";
-		// error_log("url.payload: ".$url.$payload);
 
 		$response = $this->curlHttpApiRequest('POST', $url, '', $payload, array());
-		// error_log("response: ".print_r($response, true));
 		$response = json_decode($response, true);
-		// error_log("response decoded: ".print_r($response, true));
 
 		if (isset($response['access_token']))
 			return $response['access_token'];
 		return '';
 	}
 
+    /**
+     *
+     *
+     */
 	public function callsMade()
 	{
 		return $this->shopApiCallLimitParam(0);
 	}
 
+    /**
+     *
+     *
+     */
 	public function callLimit()
 	{
 		return $this->shopApiCallLimitParam(1);
 	}
 
+    /**
+     *
+     *
+     */
 	public function callsLeft($response_headers)
 	{
 		return $this->callLimit() - $this->callsMade();
 	}
 
+    /**
+     *
+     *
+     */
 	public function call($method, $path, $params=array())
 	{
 		$baseurl = "https://{$this->shop_domain}/";
@@ -122,6 +143,10 @@ class Shopify {
 		return $message_body;
 	}
 
+    /**
+     *
+     *
+     */
 	private function curlAppendQuery($url, $query)
 	{
 		if (empty($query)) return $url;
@@ -129,6 +154,10 @@ class Shopify {
 		else return "$url?$query";
 	}
 
+    /**
+     *
+     *
+     */
 	private function curlSetopts($ch, $method, $payload, $request_headers)
 	{
 		curl_setopt($ch, CURLOPT_HEADER, true);
@@ -151,6 +180,10 @@ class Shopify {
 		}
 	}
 
+    /**
+     *
+     *
+     */
 	private function curlParseHeaders($message_headers)
 	{
 		$header_lines = preg_split("/\r\n|\n|\r/", $message_headers);
@@ -166,6 +199,10 @@ class Shopify {
 		return $headers;
 	}
 	
+    /**
+     *
+     *
+     */
 	private function shopApiCallLimitParam($index)
 	{
 		if ($this->last_response_headers == null)
@@ -175,4 +212,5 @@ class Shopify {
 		$params = explode('/', $this->last_response_headers['http_x_shopify_shop_api_call_limit']);
 		return (int) $params[$index];
 	}
+
 }
