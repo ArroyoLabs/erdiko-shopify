@@ -45,7 +45,7 @@ abstract class ShopifyAbstract
      */
     private function getConfig()
     {
-        $config = \Erdiko::getConfig('shared/shopify');
+        $config = \Erdiko::getConfig('shopify');
         return $config;
     }
 
@@ -168,7 +168,6 @@ abstract class ShopifyAbstract
     }
 
 
-
     /*** DELETE ME ***/
 
 
@@ -228,7 +227,7 @@ abstract class ShopifyAbstract
      **/
     private function returnSite()
     {
-        $config = \Erdiko::getConfig('local/shopify');
+        $config = \Erdiko::getConfig('shopify');
         return $config['shop']['erdiko'];
     }
 
@@ -239,7 +238,7 @@ abstract class ShopifyAbstract
      **/
     private function returnApiKey()
     {
-        $config = \Erdiko::getConfig('local/shopify');
+        $config = \Erdiko::getConfig('shopify');
         return $config['appInfo']['SHOPIFY_API_KEY'];
     }
 
@@ -250,7 +249,7 @@ abstract class ShopifyAbstract
      **/
     private function returnSecret()
     {
-        $config = \Erdiko::getConfig('local/shopify');
+        $config = \Erdiko::getConfig('shopify');
         return $config['appInfo']['SHOPIFY_SECRET'];
     }
 
@@ -261,7 +260,7 @@ abstract class ShopifyAbstract
      **/
     private function returnScope()
     {
-        $config = \Erdiko::getConfig('local/shopify');
+        $config = \Erdiko::getConfig('shopify');
         return $config['appInfo']['SHOPIFY_SCOPE'];
     }
 }
