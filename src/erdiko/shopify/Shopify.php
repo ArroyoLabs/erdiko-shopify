@@ -31,6 +31,11 @@ class Shopify {
 		$this->api_key = $api_key;
 		$this->secret = $secret;
 
+
+        $this->client = new \GuzzleHttp\Client([
+            "base_uri" => "https://{$this->shop_domain}/"
+        ]);
+
 			\Erdiko::log(null, "$shop_domain, $token, $api_key, $secret");
 	}
 
@@ -108,19 +113,14 @@ class Shopify {
      */
 	public function call($method, $path, $params=array())
 	{
-		$baseurl = "https://{$this->shop_domain}/";
-		$url = $baseurl.ltrim($path, '/');
-		$query = in_array($method, array('GET','DELETE')) ? $params : array();
-		$payload = in_array($method, array('POST','PUT')) ? stripslashes(json_encode($params)) : array();
-		$request_headers = in_array($method, array('POST','PUT')) ? array("Content-Type: application/json; charset=utf-8", 'Expect:') : array();
+        $url        = ltrim($path, '/');
+
+		$query      = in_array($method, array('GET','DELETE')) ? $params : array();
+		$payload    = in_array($method, array('POST','PUT')) ? stripslashes(json_encode($params)) : array();
 
 		$request_headers = in_array($method, array('POST','PUT')) ? array("Content-Type: application/json; charset=utf-8", 'Expect:') : array();
-		// add auth headers
 
-		$request_headers[] = 'X-Shopify-Access-Token: ' . $this->token;
-		$response = $this->curlHttpApiRequest($method, $url, $query, $payload, $request_headers);
-		$response = json_decode($response, true);
-		//var_dump($response);
+        $response = $this->guzzleHttpApiRequest($method, $url, $query='', $payload='', $request_headers=array());
 
 		if (isset($response['errors']) or ($this->last_response_headers['http_status_code'] >= 400))
 			throw new ShopifyApiException($method, $path, $params, $this->last_response_headers, $response);
@@ -128,25 +128,13 @@ class Shopify {
 		return (is_array($response) and (count($response) > 0)) ? array_shift($response) : $response;
 	}
 
-	public function validateSignature($query)
-	{
-		if(!is_array($query) || empty($query['signature']) || !is_string($query['signature']))
-			return false;
-
-		foreach($query as $k => $v) {
-			if($k == 'signature') continue;
-			$signature[] = $k . '=' . $v;
-		}
-
-		sort($signature);
-		$signature = md5($this->secret . implode('', $signature));
-
-		return $query['signature'] == $signature;
-	}
-
+    /**
+     *
+     *
+     */
 	private function curlHttpApiRequest($method, $url, $query='', $payload='', $request_headers=array())
 	{
-		$url = $this->curlAppendQuery($url, $query);
+		$url = $this->appendQuery($url, $query);
 		$ch = curl_init($url);
 		$this->curlSetopts($ch, $method, $payload, $request_headers);
 		$response = curl_exec($ch);
@@ -165,7 +153,34 @@ class Shopify {
      *
      *
      */
-	private function curlAppendQuery($url, $query)
+    private function guzzleHttpApiRequest($method, $url, $query='', $payload='', $request_headers=array())
+    {
+        $url = $this->appendQuery($url, $query);
+
+        $curlOpts = array(
+            CURLOPT_RETURNTRANSFER  => true,
+            CURLOPT_FOLLOWLOCATION  => true,
+            CURLOPT_MAXREDIRS       => 3,
+            CURLOPT_USERAGENT       => 'ohShopify-php-api-client',
+        );
+
+        $response = $this->client->request($method, $url, [
+                                'headers'       => ['X-Shopify-Access-Token' => $this->token],
+                                'curl'          => $curlOpts
+                            ])
+                            ->getBody()
+                            ->getContents();
+    
+        $response = (Array)json_decode(trim($response));
+
+        return $response;
+    }
+
+    /**
+     *
+     *
+     */
+	private function appendQuery($url, $query)
 	{
 		if (empty($query)) return $url;
 		if (is_array($query)) return "$url?".http_build_query($query);
