@@ -9,8 +9,8 @@
 					$item = array(
 					'size' => count($data),
 					'details' => array(
-							'name' => $data[$i]['title'],
-							'image' => $data[$i]['image']['src'],
+							'name' => $data[$i]->title,
+							'image' => $data[$i]->image->src,
 							'url' => "#"
 							)
 					);

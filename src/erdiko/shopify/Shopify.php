@@ -5,6 +5,9 @@
  */
 namespace erdiko\shopify;
 
+use GuzzleHttp\Client;
+use GuzzleHttp\Exception\ClientException;
+
 class Shopify {
 
 	public $shop_domain;

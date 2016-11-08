@@ -60,8 +60,15 @@ class ShopifyExample extends \erdiko\core\Controller
                 $pageURL .= $_SERVER["SERVER_NAME"].$_SERVER["REQUEST_URI"];
             }
 
-            //TODO WTF?
-            $pageURL = "http://62b56dcd.ngrok.io/shop/index";
+            if(array_key_exists("HTTP_X_ORIGINAL_HOST", $_SERVER) && !empty($_SERVER["HTTP_X_ORIGINAL_HOST"])) {
+                $pageURL .= $_SERVER["HTTP_X_ORIGINAL_HOST"].$_SERVER["REQUEST_URI"];
+            } else {
+                if ($_SERVER["SERVER_PORT"] != "80") {
+                    $pageURL .= $_SERVER["SERVER_NAME"].":".$_SERVER["SERVER_PORT"].$_SERVER["REQUEST_URI"];
+                } else {
+                    $pageURL .= $_SERVER["SERVER_NAME"].$_SERVER["REQUEST_URI"];
+                }
+            }
 
             // Redirect to Shopfy to get authorization
             header("Location: " . $this->shopify->getAuthorizeUrl($this->returnScope(), $pageURL)); 
@@ -91,7 +98,7 @@ class ShopifyExample extends \erdiko\core\Controller
      **/
     private function returnSite()
     {
-        $config = \Erdiko::getConfig('local/shopify');
+        $config = \Erdiko::getConfig('shopify');
         return $config['shop']['erdiko'];
     }
 
@@ -102,7 +109,7 @@ class ShopifyExample extends \erdiko\core\Controller
      **/
     private function returnApiKey()
     {
-        $config = \Erdiko::getConfig('local/shopify');
+        $config = \Erdiko::getConfig('shopify');
         return $config['appInfo']['SHOPIFY_API_KEY'];
     }
 
@@ -113,7 +120,7 @@ class ShopifyExample extends \erdiko\core\Controller
      **/
     private function returnSecret()
     {
-        $config = \Erdiko::getConfig('local/shopify');
+        $config = \Erdiko::getConfig('shopify');
         return $config['appInfo']['SHOPIFY_SECRET'];
     }
 
@@ -124,7 +131,7 @@ class ShopifyExample extends \erdiko\core\Controller
      **/
     private function returnScope()
     {
-        $config = \Erdiko::getConfig('local/shopify');
+        $config = \Erdiko::getConfig('shopify');
         return $config['appInfo']['SHOPIFY_SCOPE'];
     }
 
