@@ -555,7 +555,6 @@ class Shopify extends \erdiko\core\Controller
 		$this->setContent( $this->getView('shopify/editBlogForm',$data, dirname(__DIR__)) );
 	}
 	
-
 	/**
 	 * Show the userform to add Metafield of a product
 	 */
@@ -604,9 +603,9 @@ class Shopify extends \erdiko\core\Controller
         	$this->setTitle('Blog Articles');
         	array_push($data,$blogID);
         	if(!strcmp($type,"articleInfoPage")){
-        		$this->setContent( $this->getLayout('grid/listArticlesPage2', $data, dirname(__DIR__)) );
+                $this->setContent( $this->getLayout('json', $data, dirname(__DIR__)) );
         	} else{
-        		$this->setContent( $this->getLayout('grid/listArticles', $data, dirname(__DIR__)) );
+                $this->setContent( $this->getLayout('json', $data, dirname(__DIR__)) );
 			
         	}
         	
@@ -620,16 +619,17 @@ class Shopify extends \erdiko\core\Controller
 	/**
 	 * Get All Blog Articles
 	 */
-	public function getBlogArticles(){
+    public function getBlogArticles()
+    {
 		$blogID=$_GET['blog_id'];
 		$this->retrieveBlogArticlesHelper($blogID,"blogArticlesPage");		
 	}
 
-	
 	/**
 	 * Get all the blog article metafields
 	 */
-	public function getBlogArticleMetafields(){
+    public function getBlogArticleMetafields()
+    {
 		$blogID = $_GET['blog_id'];
 		$articleID = $_GET['article_id'];
 		$metafield = new \erdiko\shopify\models\Metafield;
@@ -667,11 +667,11 @@ class Shopify extends \erdiko\core\Controller
         }
 	}
 
-
 	/**
 	 * Add Metafields to a blog article
 	 */
-	public function getAddBlogArticleMetaField(){
+    public function getAddBlogArticleMetaField()
+    {
 		 
 		$metafield = new \erdiko\shopify\models\Metafield;
 		$data = array(
@@ -745,7 +745,11 @@ class Shopify extends \erdiko\core\Controller
         $this->setContent( $this->getLayout('message', $message) );
 	}
     
-   public function getAddArticleInfo(){
+    /**
+     *
+     */   
+    public function getAddArticleInfo()
+    {
     	
 		$metafield = new \erdiko\shopify\models\Metafield;
 		$data = array(
@@ -828,12 +832,11 @@ class Shopify extends \erdiko\core\Controller
             $this->setContent( $this->getLayout('message', $message) );
 	}
 
-	
-
 	/**
 	 * Show the userform to edit the Blog Metafields
 	 */
-	public function getShowBlogArticleEdit(){
+    public function getShowBlogArticleEdit()
+    {
 		$data=array(
 			"article_id"=>$_GET['article_id'],
 			"id"=>$_GET['id'],
@@ -847,7 +850,8 @@ class Shopify extends \erdiko\core\Controller
 	/**
 	 * Show the userform to add Metafield of a blog article
 	 */
-	public function getShowBlogArticleMetaDataForm(){
+    public function getShowBlogArticleMetaDataForm()
+    {
 
 		$data=array("article_id"=>$_GET['article_id'],
 					"blog_id"=>$_GET['blog_id']);
@@ -858,7 +862,8 @@ class Shopify extends \erdiko\core\Controller
 	/**
 	 * Display article content
 	 */
-	public function getShowArticleContent(){
+    public function getShowArticleContent()
+    {
 		$blog = new \erdiko\shopify\models\Blog;
 		$blogID=$_GET['blog_id'];
 		$articleID=$_GET['article_id'];
@@ -867,21 +872,11 @@ class Shopify extends \erdiko\core\Controller
 		$body=array('html'=>$data['body_html'],'title'=>$data['title']);
 		$this->setContent($this->getView('shopify/grid/displayData',$body,dirname(__DIR__)));
         }
-
 	
 	/**
-	 * get the articles of the News Blog
 	 */
-	public function getNews(){
-		$blog = new \erdiko\shopify\models\Blog;
-		$blogID=$blog->getBlogIDByName("News");
-		$type = "articleInfoPage";
-		$this->retrieveBlogArticlesHelper($blogID,$type);
-	}
-
-	/**
-	 */
-	public function getShowArticleInfo(){
+    public function getShowArticleInfo()
+    {
 		$metafield = new \erdiko\shopify\models\Metafield;
 		$blogID=$_GET['blog_id'];
 		$articleID=$_GET['article_id'];
@@ -891,7 +886,8 @@ class Shopify extends \erdiko\core\Controller
 
 	/**
      */
-    public function getShowAddArticleInfo(){
+    public function getShowAddArticleInfo()
+    {
     	$data=array("article_id"=>$_GET['article_id'],
 					"blog_id"=>$_GET['blog_id']);
 		$this->setTitle('Add Article Info');
@@ -900,7 +896,8 @@ class Shopify extends \erdiko\core\Controller
 
     /**
      */
-    public function getDeleteArticleInfo(){
+    public function getDeleteArticleInfo()
+    {
     	$metafield = new \erdiko\shopify\models\Metafield;
     	$srcID=$_GET['src_id'];
     	$urlID=$_GET['url_id'];
@@ -934,9 +931,11 @@ class Shopify extends \erdiko\core\Controller
 
     }
 
-
-
-    public function getShowEditArticleInfo(){
+    /**
+     *
+     */
+    public function getShowEditArticleInfo()
+    {
     	$data=array(
     		"src_id"=>$_GET['src_id'],
     		"url_id"=>$_GET['url_id'],
@@ -953,7 +952,8 @@ class Shopify extends \erdiko\core\Controller
 
     /**
      */
-    public function getEditArticleInfo(){
+    public function getEditArticleInfo()
+    {
     	$metafield = new \erdiko\shopify\models\Metafield;
 	
 
@@ -1004,6 +1004,42 @@ class Shopify extends \erdiko\core\Controller
            $message=$e->getMessage();
         }
         $this->setContent( $this->getLayout('message', $message) );
+    }
+
+
+    /**
+     */
+    public function getPages()
+    {
+		
+		$page = new \erdiko\shopify\models\Page;
+		
+		$message = "";
+		$isError = FALSE;
+
+		try{
+			$data = $page->getPages();
+		} catch(ShopifyApiException $e) {
+        	$response_headers=$e->getResponseHeaders();
+            $message = "Error in adding Metafield :: "
+                        . $response_headers['http_status_code'].":" 
+                        . $response_headers['http_status_message'];                
+        	$isError = TRUE;
+        } catch(ShopifyCurlException $e) {
+           $message = "Error :: Shopify Curl Exception";
+           $isError = TRUE;
+        } catch (Exception $e) {
+           $message = $e->getMessage();
+           $isError = TRUE;
+        }
+       
+        if(!$isError){
+        	$this->setTitle('Shopify Pages');
+            $this->setContent( $this->getLayout('json', $data, dirname(__DIR__)) );
+        } else{
+        	$this->setContent( $this->getLayout('message', $message) );
+        }
+
 	}
 
 }
