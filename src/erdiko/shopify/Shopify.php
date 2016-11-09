@@ -23,7 +23,7 @@ class Shopify {
     private $client;
 
     /**
-     *
+     * constructor which accepts the domain, token, api key and api secret
      *
      */
     public function __construct($shop_domain, $token, $api_key, $secret) 
@@ -43,7 +43,7 @@ class Shopify {
 	}
 
     /**
-     *
+     * set the API token for shopify 
      *
      */
 	public function setToken($token)
@@ -75,11 +75,10 @@ class Shopify {
 		$url = "https://{$this->shop_domain}/admin/oauth/access_token";
 		$payload = "client_id={$this->api_key}&client_secret={$this->secret}&code=$code";
 
-		$response = $this->curlHttpApiRequest('POST', $url, '', $payload, array());
-		$response = json_decode($response, true);
+		$response = $this->guzzleHttpApiRequest('POST', $url, '', $payload, array());
 
-		if (isset($response['access_token']))
-			return $response['access_token'];
+		if (!empty($response->access_token))
+			return $response->access_token;
 		return '';
 	}
 
@@ -135,27 +134,6 @@ class Shopify {
      *
      *
      */
-	private function curlHttpApiRequest($method, $url, $query='', $payload='', $request_headers=array())
-	{
-		$url = $this->appendQuery($url, $query);
-		$ch = curl_init($url);
-		$this->curlSetopts($ch, $method, $payload, $request_headers);
-		$response = curl_exec($ch);
-		$errno = curl_errno($ch);
-		$error = curl_error($ch);
-		curl_close($ch);
-
-		if ($errno) throw new ShopifyCurlException($error, $errno);
-		list($message_headers, $message_body) = preg_split("/\r\n\r\n|\n\n|\r\r/", $response, 2);
-		$this->last_response_headers = $this->curlParseHeaders($message_headers);
-		
-		return $message_body;
-	}
-
-    /**
-     *
-     *
-     */
     private function guzzleHttpApiRequest($method, $url, $query='', $payload='', $request_headers=array())
     {
         $url = $this->appendQuery($url, $query);
@@ -167,14 +145,17 @@ class Shopify {
             CURLOPT_USERAGENT       => 'ohShopify-php-api-client',
         );
 
+        try {
         $response = $this->client->request($method, $url, [
                                 'headers'       => ['X-Shopify-Access-Token' => $this->token],
                                 'curl'          => $curlOpts
-                            ])
-                            ->getBody()
-                            ->getContents();
+                                ]);
+        } catch(Guzzle\Http\Exception\ClientException $e) {
+            throw new ShopifyGuzzleException($e->getMessage());
+        }
     
-        $response = (Array)json_decode(trim($response));
+        $this->last_response_headers = $this->parseHeaders($response);
+        $response = (Array)json_decode(trim($response->getBody()->getContents()));
 
         return $response;
     }
@@ -194,49 +175,18 @@ class Shopify {
      *
      *
      */
-	private function curlSetopts($ch, $method, $payload, $request_headers)
+    private function parseHeaders($response)
 	{
-		curl_setopt($ch, CURLOPT_HEADER, true);
-		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-		curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
-		curl_setopt($ch, CURLOPT_MAXREDIRS, 3);
-		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);
-		curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
-		curl_setopt($ch, CURLOPT_USERAGENT, 'ohShopify-php-api-client');
-		curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 30);
-		curl_setopt($ch, CURLOPT_TIMEOUT, 30);
-
-		curl_setopt ($ch, CURLOPT_CUSTOMREQUEST, $method);
-		if (!empty($request_headers)) curl_setopt($ch, CURLOPT_HTTPHEADER, $request_headers);
-		
-		if ($method != 'GET' && !empty($payload))
-		{
-			if (is_array($payload)) $payload = http_build_query($payload);
-			curl_setopt ($ch, CURLOPT_POSTFIELDS, $payload);
-		}
-	}
-
-    /**
-     *
-     *
-     */
-	private function curlParseHeaders($message_headers)
-	{
-		$header_lines = preg_split("/\r\n|\n|\r/", $message_headers);
 		$headers = array();
-		list(, $headers['http_status_code'], $headers['http_status_message']) = explode(' ', trim(array_shift($header_lines)), 3);
-		foreach ($header_lines as $header_line)
-		{
-			list($name, $value) = explode(':', $header_line, 2);
-			$name = strtolower($name);
-			$headers[$name] = trim($value);
+        $responseHeaders = $response->getHeaders();
+        foreach($responseHeaders as $key => $val) {
+            $headers[$key] = array_pop($val);
 		}
-
 		return $headers;
 	}
 	
     /**
-     *
+     * returns http header 
      *
      */
 	private function shopApiCallLimitParam($index)

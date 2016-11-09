@@ -10,7 +10,7 @@
  */
 namespace erdiko\shopify;
 
-class ShopifyCurlException extends \Exception 
+class ShopifyGuzzleException extends \Exception 
 {
 
 }
