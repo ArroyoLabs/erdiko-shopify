@@ -13,10 +13,13 @@
 							'serial_num'=>$i+1,
 							'key'=>$data[$i]['key'],
 							'value' => $data[$i]['value'],
-							'edit' => "/shopify/showEdit?product_id=".$product_id."&id=".$data[$i]['id']."&key=".$data[$i]['key']."&value=".$data[$i]['value']."&value_type=".$data[$i]['value_type'],
-							'delete'=>"/shopify/deleteProductMetaData?product_id=".$product_id."&id=".$data[$i]['id']
+							'edit' => "/shop/showEdit?product_id=".$product_id."&id=".$data[$i]['id']."&key=".$data[$i]['key']."&value=".$data[$i]['value']."&value_type=".$data[$i]['value_type'],
+							'delete'=>"/shop/deleteProductMetaData?product_id=".$product_id."&id=".$data[$i]['id']
 							)
 					);
+					if($i==0){
+						echo Erdiko::getView('shopify/grid/tableHead', $item, $this->_viewRootFolder);
+					}
 				
 					echo Erdiko::getView('shopify/grid/rowitem', $item, $this->_viewRootFolder);
 				}
