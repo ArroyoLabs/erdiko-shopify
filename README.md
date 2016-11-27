@@ -21,7 +21,7 @@ Installation
 
 **via composer**
 
-	composer require erdiko/shopify 0.1.*
+	composer require erdiko/shopify
 
 
 Usage
@@ -79,6 +79,20 @@ Tokens:
 * {redirect_url}
   * A publicily accessible route exposed by your erdiko application where the Shopify 
   model is initialized
+
+
+Erdiko App Skeleton
+-------------------
+
+If you are using Erdiko, www.erdiko.org, there is some useful code for interacting with Shopify (beyond the basic API library).
+
+To install this skeleton app in your existing Erdiko app it takes only 3 steps.
+
+1. Copy the contents of the erdiko-shopify /app folder into the relavant /app folders in your site.
+
+2. Modify app/config/default/shopify.json with your specific Shopify settings
+
+3. Add a route to the Shopfy controller in your routes.json file.  The class is /erdiko/shopify/controllers/Shopify.
 
 
 Feedback
