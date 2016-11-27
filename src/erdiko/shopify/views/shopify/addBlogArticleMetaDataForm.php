@@ -1,11 +1,12 @@
-<div><h><b><u>Product Metafields:</u></b></h>
-<p>Add the Product Metafields using the following form</p></div>
+<div><h><b><u>Article Metafields:</u></b></h>
+<p>Add the Article Metafields using the following form</p></div>
 <div style="border: 2px solid; width: 550px; padding: 10px; margin-top: 29px; margin-left: 264px;">
-	<form name = "addMetaDataForm" method ="get" action="/shop/createProductMetaField">
+	<form name = "addBlogArticleMetaDataForm" method ="get" action="/shop/addBlogArticleMetaField">
+		<input type="hidden" name="blog_id" value="<?php echo $data['blog_id'] ?>" />
 		<table>
 			<tr>
-				<td>Product ID : </td>
-     			<td><input type="text" name="product_id" value="<?php echo $data ;?>"/></td> 
+				<td>Article ID : </td>
+     			<td><input type="text" name="article_id" value="<?php echo $data['article_id'] ;?>"/></td> 
 			</tr>
 			<tr>
 				<td>Meta Data Key : </td>

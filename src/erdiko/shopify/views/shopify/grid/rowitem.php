@@ -1,13 +1,18 @@
 <div>
 	<table>
-	<col width="130">
+	<col width="50">
     <col width="130">
     <col width="130">
      <col width="80">
 		<tr>
 			<td>
 				<p>
-					<?php echo $data['details']['serial_num'].'. '.$data['details']['key']; ?>
+					<?php echo $data['details']['serial_num']; ?>
+				</p> 
+			</td>
+			<td>
+				<p>
+					<?php echo $data['details']['key']; ?>
 				</p> 
 			</td>
 			<td>

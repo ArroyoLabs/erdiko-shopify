@@ -10,5 +10,5 @@
     </figcaption>
   </figure>
   
-   <a href="<?php echo '/shopify/productMetaFields?product_id='.$data['details']['product_id']; ?>">Display MetaFields</a>
+   <a href="<?php echo '/shop/productMetaFields?product_id=' . $data["details"]['id']; ?>">Display MetaFields</a>
 </div>
