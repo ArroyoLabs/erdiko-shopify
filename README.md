@@ -4,13 +4,19 @@ erdiko-shopify
 Shopify API Adapter
 
 * Connect to the shopify API
-* Use with or without Erdiko
 * Convenient composer install
+* PSR compliant
+* Use with Erdiko or your favorite framework
+
+
+If you are using composer and php 5.3 or greater, then this is a great package to use.  It is compatible with frameworks such as Laravel, Symfony, SlimPHP, and of course Erdiko.
+
+If you are using php 4 or are not using composer then check out [ohShopify](https://github.com/cmcdonaldca/ohShopify.php)
 
 Version (SemVer)
 ----------------
 
-0.1.3
+0.1.4
 
 Installation
 ------------
@@ -28,9 +34,14 @@ If you are using erdiko you can leverage our service models and sample app to ju
 
 [include specific erdiko instructions here...]
 
+Feedback
+--------
+
+Please send us feedback if you have any questions or suggestions.  If you find any bugs or find places where we are not PSR compliant please submit a github issue or email us.
+
 Special Thanks
 --------------
 
 Arroyo Labs - For sponsoring development, [http://arroyolabs.com](http://arroyolabs.com)
 
-[cmcdonaldca/ohShopify.php](https://github.com/cmcdonaldca/ohShopify.php) - Original Shopify class borrowed from ohShopify
+[cmcdonaldca/ohShopify.php](https://github.com/cmcdonaldca/ohShopify.php) - Original Shopify PHP class 

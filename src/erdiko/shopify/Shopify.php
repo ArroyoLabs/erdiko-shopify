@@ -1,7 +1,14 @@
 <?php
 /**
- * Taken from ohShopify by cmcdonaldca, 
+ * Shopify API connector
+ *
+ * @category 	shopify
+ * @copyright	Copyright (c) 2016, Arroyo Labs, www.arroyolabs.com
+ * @author 		John Arroyo, john@arroyolabs.com
+ *
+ * Originally taken from ohShopify by cmcdonaldca, 
  * https://github.com/cmcdonaldca/ohShopify.php
+ * We made it 
  */
 namespace erdiko\shopify;
 
@@ -19,8 +26,8 @@ class Shopify {
 		$this->api_key = $api_key;
 		$this->secret = $secret;
 
-		if (class_exists('Erdiko')) {
-			\Erdiko::log(null, "$shop_domain, $token, $api_key, $secret");
+		if (class_exists('\\Erdiko')) {
+			\Erdiko::log(null, "Connect to {$shop_domain} (Shopify API)");
 		}
 	}
 
