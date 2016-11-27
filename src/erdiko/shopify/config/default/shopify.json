@@ -1,0 +1,12 @@
+{
+     "appInfo":{        
+         "SHOPIFY_API_KEY": "0ccc51f561a9632a35c740a34736ade2",
+         "SHOPIFY_SECRET": "0171f581853965819afd17ebf7e15983",
+         "SHOPIFY_SCOPE": "write_products,write_orders,write_customers"
+     },
+     "shop":{
+         "uri": "erdiko.myshopify.com",
+         "erdiko": "erdiko.myshopify.com",
+         "app": "http://docker.local/shop/index"
+     }
+}

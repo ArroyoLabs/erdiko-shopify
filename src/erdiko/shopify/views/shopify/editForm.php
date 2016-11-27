@@ -1,3 +1,5 @@
+<div><h><b><u>Product Metafields:</u></b></h>
+<p>Edit the Product Metafields using the following form</p></div>
 <div style="border: 2px solid; width: 550px; padding: 10px; margin-top: 29px; margin-left: 264px;">
 	<form name = "editMetaDataForm" method ="get" action="/shop/editProductMetaField">
 		<input type="hidden" name="product_id" value="<?php echo $data['product_id'] ?>" />

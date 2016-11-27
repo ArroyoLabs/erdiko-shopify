@@ -5,21 +5,24 @@
  *
  * @category 	shopify
  * @package   	example
- * @copyright	Copyright (c) 2014, Arroyo Labs, www.arroyolabs.com
+ * @copyright	Copyright (c) 2016, Arroyo Labs, www.arroyolabs.com
  * @author 		Coleman Tung, coleman@arroyolabs.com
  * @author 		John Arroyo, john@arroyolabs.com
+ * @author 		Andy Armstrong, andy@arroyolabs.com
  */
+
 namespace erdiko\shopify\controllers;
 use \erdiko\shopify\ShopifyApiException;
 use \erdiko\shopify\ShopifyCurlException;
-use \erdiko\shopify\ShipStation;
+
 /**
  * ShopifyExample Class  extends \erdiko\shopify\Shopify
  */
 class Shopify extends \erdiko\core\Controller
 {
 	/** Cache Object */
-	private $cacheObj;
+    private $cacheObj;
+
 	/** Shopify Object */
 	protected $shopify;
 
@@ -38,7 +41,6 @@ class Shopify extends \erdiko\core\Controller
 	 */
 	public function get($var = null)
 	{
-		// error_log("var: $var");
 		if(!empty($var))
 		{
 			// load action based off of naming conventions
@@ -55,11 +57,23 @@ class Shopify extends \erdiko\core\Controller
 	public function getIndex()
 	{
 		$metafield = new \erdiko\shopify\models\Metafield; // instantiate model to force authentication
+
 		$this->setTitle('Shopify Examples');
 		$this->setContent( $this->getView('shopify/index', null, dirname(__DIR__)) );
 	}
 
-	
+	/**
+	 * Get Metafields
+	 */
+	public function getMetafields()
+	{
+		$metafield = new \erdiko\shopify\models\Metafield;
+		$data = $metafield->getMetafields();
+
+		$this->setTitle('Shopify Metafields');
+		$this->setContent( $this->getLayout('json', $data, dirname(__DIR__)) );
+	}
+
 	/**
 	 * Get Metafields
 	 */
@@ -71,16 +85,17 @@ class Shopify extends \erdiko\core\Controller
 				"namespace" => $metafield->getNamespace(),
     			"key" => "warehouse",
     			"value" => 25,
-    			"value_type" => "integer")
-			);
+                "value_type" => "integer"
+        ));
+
 		$data = $metafield->setMetafields($meta);
 
 		$this->setTitle('Shopify Metafields');
-		$this->setContent( $this->getLayout('json', $data) );
+		$this->setContent( $this->getLayout('json', $data, dirname(__DIR__)) );
 	}
 
 	/**
-	 * Get Customer
+	 * Get Customers
 	 */
 	public function getCustomers()
 	{
@@ -89,129 +104,88 @@ class Shopify extends \erdiko\core\Controller
 		$message="";
 		$isError=FALSE;
 
-
-		try{
-			$data = $customer->getCustomers();
-		}
-		catch(ShopifyApiException $e)
-        {
+		try {
+            $data = $customer->getCustomers();
+		} catch(ShopifyApiException $e) {
         	$response_headers=$e->getResponseHeaders();
             $message = "Error in getting Customer list :: ".$response_headers['http_status_code'].":".$response_headers['http_status_message'];                
         	$isError=TRUE;
-        }
-        catch(ShopifyCurlException $e)
-        {
+        } catch(ShopifyCurlException $e) {
            $message="Error :: Shopify Curl Exception";
            $isError=TRUE;
-        }
-        catch (\Exception $e)
-        {
+        } catch (Exception $e) {
            $message=$e->getMessage();
            $isError=TRUE;
         }
        
-		
-        if(!$isError){
-        	$this->setTitle('Shopify Customers');
-			$this->setContent( $this->getLayout('json', $data) );
-        } else{
-
-        	$this->setContent( $this->getLayout('message', $message, dirname(__DIR__)) );
+        if(!$isError) {
+            $this->setTitle('Shopify Customers');
+            $this->setContent( $this->getLayout('json', $data, dirname(__DIR__)) );
+        } else {
+            $this->setContent( $this->getLayout('message', $message) );
         }
 
 	}
 
 	/**
-	 * Get Order
+	 * Get Orders
 	 */
 	public function getOrders()
 	{
 		$order = new \erdiko\shopify\models\Order;
-
 		
 		$message="";
 		$isError=FALSE;
 
-
-		try{
-			$data = $order->getOrders();
-		}
-		catch(ShopifyApiException $e)
-        {
-        	$response_headers=$e->getResponseHeaders();
+        try {
+            $data = $order->getOrders();
+        } catch(ShopifyApiException $e) {
+            $response_headers=$e->getResponseHeaders();
             $message = "Error in getting order list :: ".$response_headers['http_status_code'].":".$response_headers['http_status_message'];                
-        	$isError=TRUE;
-        }
-        catch(ShopifyCurlException $e)
-        {
-           $message="Error :: Shopify Curl Exception";
-           $isError=TRUE;
-        }
-        catch (\Exception $e)
-        {
-           $message=$e->getMessage();
-           $isError=TRUE;
+            $isError=TRUE;
+        } catch(ShopifyCurlException $e) {
+            $message="Error :: Shopify Curl Exception";
+            $isError=TRUE;
+        } catch (Exception $e) {
+            $message=$e->getMessage();
+            $isError=TRUE;
         }
        
 		
-        if(!$isError){
-        	$this->setTitle('Shopify Orders');
-			$this->setContent( $this->getLayout('json', $data) );
-        } else{
-
-        	$this->setContent( $this->getLayout('message', $message, dirname(__DIR__)) );
+        if(!$isError) {
+            $this->setTitle('Shopify Orders');
+            $this->setContent($this->getLayout('json', $data, dirname(__DIR__)));
+        } else {
+        	$this->setContent($this->getLayout('message', $message));
         }
 	}
 
 	/**
-	 * Product dump for debug purpose
-	 */
-	public function getProductDump()
-	{
-		 $product = new \erdiko\shopify\models\Product;	
-		 $data = $product->getProducts();
-		 $this->setTitle('Shopify Product Grid');
-		 $this->setContent( $this->getLayout('json', $data) );
-	}
-
-	/**
-	 * Get Product
+	 * Get Products
 	 */
 	public function getProducts()
 	{
         $product = new \erdiko\shopify\models\Product;
-
-		
-		$message="";
-		$isError=FALSE;
-
-		try{
-			$data = $product->getProducts();
-		}
-		catch(ShopifyApiException $e)
-        {
-        	$response_headers=$e->getResponseHeaders();
+        try {
+            $data = $product->getProducts();
+        } catch(ShopifyApiException $e) {
+            $response_headers=$e->getResponseHeaders();
             $message = "Error in getting product list :: ".$response_headers['http_status_code'].":".$response_headers['http_status_message'];                
-        	$isError=TRUE;
+            $isError=TRUE;
+        } catch(ShopifyCurlException $e) {
+            $message="Error :: Shopify Curl Exception";
+            $isError=TRUE;
+        } catch (Exception $e) {
+            $message=$e->getMessage();
+            $isError=TRUE;
         }
-        catch(ShopifyCurlException $e)
-        {
-           $message="Error :: Shopify Curl Exception";
-           $isError=TRUE;
-        }
-        catch (\Exception $e)
-        {
-           $message=$e->getMessage();
-           $isError=TRUE;
-        }
-       
-		
-        if(!$isError){
-        	$this->setTitle('Shopify Product Grid');
-			$this->setContent( $this->getLayout('grid/shopify', $data, dirname(__DIR__)) );
+
+        if(!$isError) {
+            $this->setTitle('Shopify Product Grid');
+            $this->setContent( $this->getLayout('grid/shopify', $data, dirname(__DIR__)) );
         } else{
 
-        	$this->setContent( $this->getLayout('message', $message, dirname(__DIR__)) );
+        	$this->setContent( $this->getLayout('message', $message) );
         }
 	}
 
@@ -223,7 +197,7 @@ class Shopify extends \erdiko\core\Controller
 		$metafield = new \erdiko\shopify\models\Metafield;
 		$productID=$_GET['product_id'];
 		$args=array(
-			"metafield"=>array("namespace" => $metafields-> getNamespace(),
+			"metafield"=>array("namespace" => "inventory",
     		"key" => $_GET['key'],
     		"value"=> $_GET['value'],
     		"value_type" =>$_GET['value_type'])
@@ -242,11 +216,11 @@ class Shopify extends \erdiko\core\Controller
         {
            $message="Error :: Shopify Curl Exception";
         }
-        catch (\Exception $e)
+        catch (Exception $e)
         {
            $message=$e->getMessage();
         }
-		$this->setContent( $this->getLayout('message', $message, dirname(__DIR__)) );
+		$this->setContent( $this->getLayout('message', $message) );
 		
 	}
 
@@ -275,7 +249,7 @@ class Shopify extends \erdiko\core\Controller
            $message="Error :: Shopify Curl Exception";
            $isError=TRUE;
         }
-        catch (\Exception $e)
+        catch (Exception $e)
         {
            $message=$e->getMessage();
            $isError=TRUE;
@@ -287,7 +261,7 @@ class Shopify extends \erdiko\core\Controller
 			$this->setContent( $this->getLayout('grid/metaDataListing', $data, dirname(__DIR__)) );
         } else{
 
-        	$this->setContent( $this->getLayout('message', $message, dirname(__DIR__)) );
+        	$this->setContent( $this->getLayout('message', $message) );
         }
 		
 	}
@@ -320,17 +294,18 @@ class Shopify extends \erdiko\core\Controller
         {
            $message="Error :: Shopify Curl Exception";
         }
-        catch (\Exception $e)
+        catch (Exception $e)
         {
            $message=$e->getMessage();
         }
-		$this->setContent( $this->getLayout('message', $message, dirname(__DIR__)) );
+		$this->setContent( $this->getLayout('message', $message) );
 	}
 
 	/**
 	 * Delete Metafield of a product
 	 */
-	public function getDeleteProductMetaData(){
+    public function getDeleteProductMetaData()
+    {
 		$metafield = new \erdiko\shopify\models\Metafield;
 		$productID=$_GET['product_id'];
 		$metaFieldID=$_GET['id'];
@@ -349,17 +324,18 @@ class Shopify extends \erdiko\core\Controller
         {
            $message="Error :: Shopify Curl Exception";
         }
-        catch (\Exception $e)
+        catch (Exception $e)
         {
            $message=$e->getMessage();
         }
-        $this->setContent( $this->getLayout('message', $message, dirname(__DIR__)) );
+        $this->setContent( $this->getLayout('message', $message) );
 	}
 
 	/**
 	 * Show the userform to edit the Metafields
 	 */
-	public function getShowEdit(){
+    public function getShowEdit()
+    {
 		$data=array(
 			"product_id"=>$_GET['product_id'],
 			"id"=>$_GET['id'],
@@ -373,7 +349,8 @@ class Shopify extends \erdiko\core\Controller
 	/**
 	 * Show the userform to add Metafield of a product
 	 */
-	public function getShowForm(){
+    public function getShowForm()
+    {
 		$data=$_GET['product_id'];
 		$this->setTitle('Create New Meta Field');
 		$this->setContent($this->getView('shopify/formView',$data,dirname(__DIR__)));
@@ -382,7 +359,8 @@ class Shopify extends \erdiko\core\Controller
 	/**
 	 * Get the list of existing blogs
 	 */
-	public function getBlogs(){
+    public function getBlogs()
+    {
 		
 		$blog = new \erdiko\shopify\models\Blog;
 		
@@ -391,30 +369,26 @@ class Shopify extends \erdiko\core\Controller
 
 		try{
 			$data = $blog->getBlogs();
-		}
-		catch(ShopifyApiException $e)
-        {
+		} catch(ShopifyApiException $e) {
         	$response_headers=$e->getResponseHeaders();
-            $message = "Error in adding Metafield :: ".$response_headers['http_status_code'].":".$response_headers['http_status_message'];                
-        	$isError=TRUE;
-        }
-        catch(ShopifyCurlException $e)
-        {
-           $message="Error :: Shopify Curl Exception";
-           $isError=TRUE;
-        }
-        catch (\Exception $e)
-        {
-           $message=$e->getMessage();
-           $isError=TRUE;
+            $message = "Error in adding Metafield :: "
+                        . $response_headers['http_status_code'].":" 
+                        . $response_headers['http_status_message'];                
+        	$isError = TRUE;
+        } catch(ShopifyCurlException $e) {
+           $message = "Error :: Shopify Curl Exception";
+           $isError = TRUE;
+        } catch (Exception $e) {
+           $message = $e->getMessage();
+           $isError = TRUE;
         }
        
         if(!$isError){
         	$this->setTitle('Shopify Blogs');
-			$this->setContent( $this->getLayout('grid/blogPost', $data, dirname(__DIR__)) );
+            $this->setContent( $this->getLayout('json', $data, dirname(__DIR__)) );
         } else{
 
-        	$this->setContent( $this->getLayout('message', $message, dirname(__DIR__)) );
+        	$this->setContent( $this->getLayout('message', $message) );
         }
 
 	}
@@ -422,7 +396,8 @@ class Shopify extends \erdiko\core\Controller
 	/**
 	 * Add Metafields to a blog
 	 */
-	public function getAddBlogMetaField(){
+    public function getAddBlogMetaField()
+    {
 		 
 		$metafield = new \erdiko\shopify\models\Metafield;
 		$data = array(
@@ -450,18 +425,19 @@ class Shopify extends \erdiko\core\Controller
         {
            $message="Error :: Shopify Curl Exception";
         }
-        catch (\Exception $e)
+        catch (Exception $e)
         {
            $message=$e->getMessage();
         }
-        $this->setContent( $this->getLayout('message', $message, dirname(__DIR__)) );
+        $this->setContent( $this->getLayout('message', $message) );
 	
 	}
 
 	/**
 	 * Get the blog Metafields
 	 */
-	public function getBlogMetaFields(){
+    public function getBlogMetaFields()
+    {
 		$metafield = new \erdiko\shopify\models\Metafield;
 		$blogID = $_GET['blog_id'];
 	
@@ -482,7 +458,7 @@ class Shopify extends \erdiko\core\Controller
            $message="Error :: Shopify Curl Exception";
            $isError=TRUE;
         }
-        catch (\Exception $e)
+        catch (Exception $e)
         {
            $message=$e->getMessage();
            $isError=TRUE;
@@ -494,10 +470,9 @@ class Shopify extends \erdiko\core\Controller
 			$this->setContent( $this->getLayout('grid/blogsMetaDataListing', $data, dirname(__DIR__)) );
         } else{
 
-        	$this->setContent( $this->getLayout('message', $message, dirname(__DIR__)) );
+        	$this->setContent( $this->getLayout('message', $message) );
         }
 	}
-
 
 	/**
 	 * Edit Metafield of a blog
@@ -528,18 +503,19 @@ class Shopify extends \erdiko\core\Controller
         {
            $message="Error :: Shopify Curl Exception";
         }
-        catch (\Exception $e)
+        catch (Exception $e)
         {
            $message=$e->getMessage();
         }
-        $this->setContent( $this->getLayout('message', $message, dirname(__DIR__)) );
+        $this->setContent( $this->getLayout('message', $message) );
 
 	}
 
 	/**
 	 * Delete Metafield of a blog
 	 */
-	public function getDeleteBlogMetaData(){
+    public function getDeleteBlogMetaData()
+    {
 		$metafield = new \erdiko\shopify\models\Metafield;
 		$blogID=$_GET['blog_id'];
 		$metaFieldID=$_GET['id'];
@@ -558,17 +534,18 @@ class Shopify extends \erdiko\core\Controller
         {
            $message="Error :: Shopify Curl Exception";
         }
-        catch (\Exception $e)
+        catch (Exception $e)
         {
            $message=$e->getMessage();
         }
-        $this->setContent( $this->getLayout('message', $message, dirname(__DIR__)) );
+        $this->setContent( $this->getLayout('message', $message) );
 	}
 
 	/**
 	 * Show the userform to edit the Blog Metafields
 	 */
-	public function getShowBlogEdit(){
+    public function getShowBlogEdit()
+    {
 		$data=array(
 			"blog_id"=>$_GET['blog_id'],
 			"id"=>$_GET['id'],
@@ -579,11 +556,11 @@ class Shopify extends \erdiko\core\Controller
 		$this->setContent( $this->getView('shopify/editBlogForm',$data, dirname(__DIR__)) );
 	}
 	
-
 	/**
 	 * Show the userform to add Metafield of a product
 	 */
-	public function getShowBlogMetaDataAddForm(){
+    public function getShowBlogMetaDataAddForm()
+    {
 		$data=$_GET['blog_id'];
 		$this->setTitle('Create New Meta Field');
 		$this->setContent($this->getView('shopify/addBlogMetaDataFormView',$data,dirname(__DIR__)));
@@ -592,7 +569,8 @@ class Shopify extends \erdiko\core\Controller
 	/**
 	 *
 	 */
-	private function retrieveBlogArticlesHelper($blogID,$type){
+    private function retrieveBlogArticlesHelper($blogID,$type)
+    {
 		$blog = new \erdiko\shopify\models\Blog;
 		$data=$blog->getBlogArticles($blogID);
 
@@ -605,7 +583,9 @@ class Shopify extends \erdiko\core\Controller
 		catch(ShopifyApiException $e)
         {
         	$response_headers=$e->getResponseHeaders();
-            $message = "Error in adding Metafield :: ".$response_headers['http_status_code'].":".$response_headers['http_status_message'];                
+            $message = "Error in adding Metafield :: "
+                . $response_headers['http_status_code'] . ":" 
+                . $response_headers['http_status_message'];                
         	$isError=TRUE;
         }
         catch(ShopifyCurlException $e)
@@ -613,7 +593,7 @@ class Shopify extends \erdiko\core\Controller
            $message="Error :: Shopify Curl Exception";
            $isError=TRUE;
         }
-        catch (\Exception $e)
+        catch (Exception $e)
         {
            $message=$e->getMessage();
            $isError=TRUE;
@@ -624,15 +604,15 @@ class Shopify extends \erdiko\core\Controller
         	$this->setTitle('Blog Articles');
         	array_push($data,$blogID);
         	if(!strcmp($type,"articleInfoPage")){
-        		$this->setContent( $this->getLayout('grid/listArticlesPage2', $data, dirname(__DIR__)) );
+                $this->setContent( $this->getLayout('json', $data, dirname(__DIR__)) );
         	} else{
-        		$this->setContent( $this->getLayout('grid/listArticles', $data, dirname(__DIR__)) );
+                $this->setContent( $this->getLayout('json', $data, dirname(__DIR__)) );
 			
         	}
         	
         } else{
 
-        	$this->setContent( $this->getLayout('message', $message, dirname(__DIR__)) );
+        	$this->setContent( $this->getLayout('message', $message) );
         }	
 
 	}
@@ -640,16 +620,17 @@ class Shopify extends \erdiko\core\Controller
 	/**
 	 * Get All Blog Articles
 	 */
-	public function getBlogArticles(){
+    public function getBlogArticles()
+    {
 		$blogID=$_GET['blog_id'];
 		$this->retrieveBlogArticlesHelper($blogID,"blogArticlesPage");		
 	}
 
-	
 	/**
 	 * Get all the blog article metafields
 	 */
-	public function getBlogArticleMetafields(){
+    public function getBlogArticleMetafields()
+    {
 		$blogID = $_GET['blog_id'];
 		$articleID = $_GET['article_id'];
 		$metafield = new \erdiko\shopify\models\Metafield;
@@ -671,7 +652,7 @@ class Shopify extends \erdiko\core\Controller
            $message="Error :: Shopify Curl Exception";
            $isError=TRUE;
         }
-        catch (\Exception $e)
+        catch (Exception $e)
         {
            $message=$e->getMessage();
            $isError=TRUE;
@@ -683,15 +664,15 @@ class Shopify extends \erdiko\core\Controller
 			$this->setContent( $this->getLayout('grid/articleMetaDataListing', $data, dirname(__DIR__)) );
         } else{
 
-        	$this->setContent( $this->getLayout('message', $message, dirname(__DIR__)) );
+        	$this->setContent( $this->getLayout('message', $message) );
         }
 	}
-
 
 	/**
 	 * Add Metafields to a blog article
 	 */
-	public function getAddBlogArticleMetaField(){
+    public function getAddBlogArticleMetaField()
+    {
 		 
 		$metafield = new \erdiko\shopify\models\Metafield;
 		$data = array(
@@ -721,11 +702,11 @@ class Shopify extends \erdiko\core\Controller
         {
            $message="Error :: Shopify Curl Exception";
         }
-        catch (\Exception $e)
+        catch (Exception $e)
         {
            $message=$e->getMessage();
         }
-        $this->setContent( $this->getLayout('message', $message, dirname(__DIR__)) );
+        $this->setContent( $this->getLayout('message', $message) );
 	}
 
 	/**
@@ -758,14 +739,18 @@ class Shopify extends \erdiko\core\Controller
         {
            $message="Error :: Shopify Curl Exception";
         }
-        catch (\Exception $e)
+        catch (Exception $e)
         {
            $message=$e->getMessage();
         }
-        $this->setContent( $this->getLayout('message', $message, dirname(__DIR__)) );
+        $this->setContent( $this->getLayout('message', $message) );
 	}
     
-   public function getAddArticleInfo(){
+    /**
+     *
+     */   
+    public function getAddArticleInfo()
+    {
     	
 		$metafield = new \erdiko\shopify\models\Metafield;
 		$data = array(
@@ -809,14 +794,12 @@ class Shopify extends \erdiko\core\Controller
         {
            $message="Error :: Shopify Curl Exception";
         }
-        catch (\Exception $e)
+        catch (Exception $e)
         {
            $message=$e->getMessage();
         }
-        $this->setContent( $this->getLayout('message', $message, dirname(__DIR__)) );
+        $this->setContent( $this->getLayout('message', $message) );
     }
-
-
     
     /**
 	 * Delete the blog article metafields
@@ -841,19 +824,18 @@ class Shopify extends \erdiko\core\Controller
         {
            $message="Error :: Shopify Curl Exception";
         }
-        catch (\Exception $e)
+        catch (Exception $e)
         {
            $message=$e->getMessage();
         }
-        $this->setContent( $this->getLayout('message', $message, dirname(__DIR__)) );
+            $this->setContent( $this->getLayout('message', $message) );
 	}
-
-	
 
 	/**
 	 * Show the userform to edit the Blog Metafields
 	 */
-	public function getShowBlogArticleEdit(){
+    public function getShowBlogArticleEdit()
+    {
 		$data=array(
 			"article_id"=>$_GET['article_id'],
 			"id"=>$_GET['id'],
@@ -867,7 +849,8 @@ class Shopify extends \erdiko\core\Controller
 	/**
 	 * Show the userform to add Metafield of a blog article
 	 */
-	public function getShowBlogArticleMetaDataForm(){
+    public function getShowBlogArticleMetaDataForm()
+    {
 
 		$data=array("article_id"=>$_GET['article_id'],
 					"blog_id"=>$_GET['blog_id']);
@@ -878,7 +861,8 @@ class Shopify extends \erdiko\core\Controller
 	/**
 	 * Display article content
 	 */
-	public function getShowArticleContent(){
+    public function getShowArticleContent()
+    {
 		$blog = new \erdiko\shopify\models\Blog;
 		$blogID=$_GET['blog_id'];
 		$articleID=$_GET['article_id'];
@@ -886,22 +870,12 @@ class Shopify extends \erdiko\core\Controller
 		$data=$blog->getArticle($blogID,$articleID);
 		$body=array('html'=>$data['body_html'],'title'=>$data['title']);
 		$this->setContent($this->getView('shopify/grid/displayData',$body,dirname(__DIR__)));
-	}
-
+    }
 	
 	/**
-	 * get the articles of the News Blog
 	 */
-	public function getNews(){
-		$blog = new \erdiko\shopify\models\Blog;
-		$blogID=$blog->getBlogIDByName("News");
-		$type = "articleInfoPage";
-		$this->retrieveBlogArticlesHelper($blogID,$type);
-	}
-
-	/**
-	 */
-	public function getShowArticleInfo(){
+    public function getShowArticleInfo()
+    {
 		$metafield = new \erdiko\shopify\models\Metafield;
 		$blogID=$_GET['blog_id'];
 		$articleID=$_GET['article_id'];
@@ -911,7 +885,8 @@ class Shopify extends \erdiko\core\Controller
 
 	/**
      */
-    public function getShowAddArticleInfo(){
+    public function getShowAddArticleInfo()
+    {
     	$data=array("article_id"=>$_GET['article_id'],
 					"blog_id"=>$_GET['blog_id']);
 		$this->setTitle('Add Article Info');
@@ -920,7 +895,8 @@ class Shopify extends \erdiko\core\Controller
 
     /**
      */
-    public function getDeleteArticleInfo(){
+    public function getDeleteArticleInfo()
+    {
     	$metafield = new \erdiko\shopify\models\Metafield;
     	$srcID=$_GET['src_id'];
     	$urlID=$_GET['url_id'];
@@ -946,17 +922,19 @@ class Shopify extends \erdiko\core\Controller
         {
            $message="Error :: Shopify Curl Exception";
         }
-        catch (\Exception $e)
+        catch (Exception $e)
         {
            $message=$e->getMessage();
         }
-        $this->setContent( $this->getLayout('message', $message, dirname(__DIR__)) );
+        $this->setContent( $this->getLayout('message', $message) );
 
     }
 
-
-
-    public function getShowEditArticleInfo(){
+    /**
+     *
+     */
+    public function getShowEditArticleInfo()
+    {
     	$data=array(
     		"src_id"=>$_GET['src_id'],
     		"url_id"=>$_GET['url_id'],
@@ -973,7 +951,8 @@ class Shopify extends \erdiko\core\Controller
 
     /**
      */
-    public function getEditArticleInfo(){
+    public function getEditArticleInfo()
+    {
     	$metafield = new \erdiko\shopify\models\Metafield;
 	
 
@@ -1019,273 +998,46 @@ class Shopify extends \erdiko\core\Controller
         {
            $message="Error :: Shopify Curl Exception";
         }
-        catch (\Exception $e)
+        catch (Exception $e)
         {
            $message=$e->getMessage();
         }
-        $this->setContent( $this->getLayout('message', $message, dirname(__DIR__)) );
+        $this->setContent( $this->getLayout('message', $message) );
     }
-    //---------------------- Store Metafields --------------------------------//
 
     /**
-	 * Get Metafields
-	 */
-	public function getMetafields()
-	{
-		$metafield = new \erdiko\shopify\models\Metafield;
-	
-		$message="";
-		$isError=FALSE;
+     */
+    public function getPages()
+    {
+		
+		$page = new \erdiko\shopify\models\Page;
+		
+		$message = "";
+		$isError = FALSE;
 
 		try{
-			$data = $metafield->getMetafields();
-		}
-		catch(ShopifyApiException $e)
-        {
+			$data = $page->getPages();
+		} catch(ShopifyApiException $e) {
         	$response_headers=$e->getResponseHeaders();
-            $message = "Error in getting Metafields :: ".$response_headers['http_status_code'].":".$response_headers['http_status_message'];                
-        	$isError=TRUE;
-        }
-        catch(ShopifyCurlException $e)
-        {
-           $message="Error :: Shopify Curl Exception";
-           $isError=TRUE;
-        }
-        catch (\Exception $e)
-        {
-           $message=$e->getMessage();
-           $isError=TRUE;
+            $message = "Error in adding Metafield :: "
+                        . $response_headers['http_status_code'].":" 
+                        . $response_headers['http_status_message'];                
+        	$isError = TRUE;
+        } catch(ShopifyCurlException $e) {
+           $message = "Error :: Shopify Curl Exception";
+           $isError = TRUE;
+        } catch (Exception $e) {
+           $message = $e->getMessage();
+           $isError = TRUE;
         }
        
-		
         if(!$isError){
-        	$this->setTitle('Shopify Metafields');
-			$this->setContent( $this->getLayout('json', $data) );
+        	$this->setTitle('Shopify Pages');
+            $this->setContent( $this->getLayout('json', $data, dirname(__DIR__)) );
         } else{
-
-        	$this->setContent( $this->getLayout('message', $message, dirname(__DIR__)) );
+        	$this->setContent( $this->getLayout('message', $message) );
         }
+
 	}
-
-
-	/**
-	 * Set Store Metafields
-	 */
-	 public function getSetStoreMetafields(){
-    	$metafield = new \erdiko\shopify\models\Metafield;
-    	$args=array(
-			"metafield"=>array("namespace" => $metafield->getNamespace(),
-    		"key" => $_GET['key'],
-    		"value"=> $_GET['value'],
-    		"value_type" =>$_GET['value_type'])
-			);
-    	
-        $message = "successfully processed the request";
-		try{
-			$metafield->setMetafields($args);
-		}
-		catch(ShopifyApiException $e)
-        {
-        	$response_headers=$e->getResponseHeaders();
-            $message = "Error in adding Store Metafields :: ".$response_headers['http_status_code'].":".$response_headers['http_status_message'];          
-            
-        }
-        catch(ShopifyCurlException $e)
-        {
-           $message="Error :: Shopify Curl Exception";
-        }
-        catch (\Exception $e)
-        {
-           $message=$e->getMessage();
-        }
-        $this->setContent( $this->getLayout('message', $message, dirname(__DIR__)) );
-
-    }
-
-    /**
-     * Show user form to edit the store metafields
-     */
-    public function getShowEditStoreMetaFields(){
-    	$data=array("id"=>$_GET['id'],
-    		"key"=>$_GET['key'],
-    		"value"=>$_GET['value'],
-    		"value_type"=>$_GET['value_type']
-    		);
-    	
-    	$this->setTitle('Edit Store Metafield');
-		$this->setContent($this->getView('shopify/editStoreMetaFieldForm',$data,dirname(__DIR__)));
-    }
-
-    /**
-     * edit the store metafields
-     */
-    public function getEditStoreMetafields(){
-    	$metafield = new \erdiko\shopify\models\Metafield;
-    	$metaID = $_GET['id'];
-    	$args=array(
-			"metafield"=>array(
-    		"id" => $metaID,
-    		"value"=> $_GET['value'],
-    		"value_type" =>$_GET['value_type'])
-			);
-    	
-        $message = "successfully processed the request";
-		try{
-			$metafield->updateMetafield($metaID,$args);
-		}
-		catch(ShopifyApiException $e)
-        {
-        	$response_headers=$e->getResponseHeaders();
-            $message = "Error in editing Store Metafields :: ".$response_headers['http_status_code'].":".$response_headers['http_status_message'];          
-            
-        }
-        catch(ShopifyCurlException $e)
-        {
-           $message="Error :: Shopify Curl Exception";
-        }
-        catch (\Exception $e)
-        {
-           $message=$e->getMessage();
-        }
-        $this->setContent( $this->getLayout('message', $message, dirname(__DIR__)) );
-
-    }
-
-    /**
-     * Delete the store metafields
-     */
-    public function getDeleteStoreMetafields(){
-    	$metafield = new \erdiko\shopify\models\Metafield;
-    	$metaID = $_GET['id'];
-    
-    	
-        $message = "successfully processed the request";
-		try{
-			$metafield->deleteMetafield($metaID,array());
-		}
-		catch(ShopifyApiException $e)
-        {
-        	$response_headers=$e->getResponseHeaders();
-            $message = "Error in Deleting Store Metafields :: ".$response_headers['http_status_code'].":".$response_headers['http_status_message'];          
-            
-        }
-        catch(ShopifyCurlException $e)
-        {
-           $message="Error :: Shopify Curl Exception";
-        }
-        catch (\Exception $e)
-        {
-           $message=$e->getMessage();
-        }
-        $this->setContent( $this->getLayout('message', $message, dirname(__DIR__)) );
-
-    } 
-
- 
-    /**
-     * show the user form to edit all the store metafields
-     */
-    public function getShowEditStoreInfo(){
-    	$meta= new \erdiko\shopify\models\Metafield;
-    	$data=$meta->getStoreInfo();
-    	$this->setTitle('Edit Store Info');
-    	$this->setContent( $this->getLayout('grid/editStoreInfoForm', $data, dirname(__DIR__)) );
-    }
-
-  
-    /**
-     * edit all the store metafields
-     */
-    public function getEditStoreInfo(){
-    	$meta= new \erdiko\shopify\models\Metafield;
-    	$data=$meta->getStoreInfo();
-    	
-    	$idArray=$data['id'];
-    	$keys=$data['keys'];
-
-    	$message = "successfully processed the request";
-    	try{
-    		foreach($keys as $key){
-    			$args=array(
-					"metafield"=>array(
-    				"id" => $idArray[$key.'_id'],
-    				"value"=> $_GET[$key],
-    				"value_type" =>"string")
-				);
-				$meta->updateMetafield($idArray[$key.'_id'],$args);
-    		}
-    	}
-    	catch(ShopifyApiException $e)
-        {
-        	$response_headers=$e->getResponseHeaders();
-            $message = "Error in Editing Store Info :: ".$response_headers['http_status_code'].":".$response_headers['http_status_message'];          
-            
-        }
-        catch(ShopifyCurlException $e)
-        {
-           $message="Error :: Shopify Curl Exception";
-        }
-        catch (\Exception $e)
-        {
-           $message=$e->getMessage();
-        }
-        $this->setContent( $this->getLayout('message', $message, dirname(__DIR__)) );
-
-    }
-
-    /**
-     * delete all the store metafields
-     */
-     public function getDeleteStoreInfo(){
-    	$meta= new \erdiko\shopify\models\Metafield;
-    	$data=$meta->getStoreInfo();
-    	
-    	$idArray=$data['id'];
-    	$keys=$data['keys'];
-
-    	$message = "successfully processed the request";
-    	try{
-    		foreach($keys as $key){
-    			
-				$meta->deleteMetafield($idArray[$key.'_id']);
-    		}
-    	}
-    	catch(ShopifyApiException $e)
-        {
-        	$response_headers=$e->getResponseHeaders();
-            $message = "Error in deleting Store Info :: ".$response_headers['http_status_code'].":".$response_headers['http_status_message'];          
-            
-        }
-        catch(ShopifyCurlException $e)
-        {
-           $message="Error :: Shopify Curl Exception";
-        }
-        catch (\Exception $e)
-        {
-           $message=$e->getMessage();
-        }
-        $this->setContent( $this->getLayout('message', $message, dirname(__DIR__)) );
-
-    }
-
-   
-    /**
-     * show the user form to add store metafield
-     */
-    public function getShowAddNewStoreMetaField(){
-    	$this->setTitle('Store Info');
-    	$this->setContent($this->getView('shopify/addStoreMetaFieldForm',null,dirname(__DIR__)));
-    }
-
-    /**
-     * display all the store metafields
-     */
-    public function getDisplayStoreInfo(){
-
-    	$meta= new \erdiko\shopify\models\Metafield;
-    	$data=$meta->getStoreInfo();
-    	$this->setTitle('Store Info');
-    	$this->setContent( $this->getLayout('grid/storeInfoListing', $data, dirname(__DIR__)) );
-    }
 
 }

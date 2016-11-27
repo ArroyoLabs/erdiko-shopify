@@ -21,13 +21,6 @@ class Blog extends ShopifyAbstract
 		return $this->getShopify()->call('GET', '/admin/blogs.json', array());
 	}
 
-	/**
-	 * get a single blog
-	 */
-	public function getBlog($id){
-		return $this->getShopify()->call('GET', '/admin/blogs/'.$id.'.json', array());
-	}
-
 
 	/**
 	 * modify a particular blog
