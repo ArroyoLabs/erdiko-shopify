@@ -304,7 +304,8 @@ class Shopify extends \erdiko\core\Controller
 	/**
 	 * Delete Metafield of a product
 	 */
-	public function getDeleteProductMetaData(){
+    public function getDeleteProductMetaData()
+    {
 		$metafield = new \erdiko\shopify\models\Metafield;
 		$productID=$_GET['product_id'];
 		$metaFieldID=$_GET['id'];
@@ -333,7 +334,8 @@ class Shopify extends \erdiko\core\Controller
 	/**
 	 * Show the userform to edit the Metafields
 	 */
-	public function getShowEdit(){
+    public function getShowEdit()
+    {
 		$data=array(
 			"product_id"=>$_GET['product_id'],
 			"id"=>$_GET['id'],
@@ -471,7 +473,6 @@ class Shopify extends \erdiko\core\Controller
         	$this->setContent( $this->getLayout('message', $message) );
         }
 	}
-
 
 	/**
 	 * Edit Metafield of a blog
@@ -799,8 +800,6 @@ class Shopify extends \erdiko\core\Controller
         }
         $this->setContent( $this->getLayout('message', $message) );
     }
-
-
     
     /**
 	 * Delete the blog article metafields
@@ -871,7 +870,7 @@ class Shopify extends \erdiko\core\Controller
 		$data=$blog->getArticle($blogID,$articleID);
 		$body=array('html'=>$data['body_html'],'title'=>$data['title']);
 		$this->setContent($this->getView('shopify/grid/displayData',$body,dirname(__DIR__)));
-        }
+    }
 	
 	/**
 	 */
@@ -1005,7 +1004,6 @@ class Shopify extends \erdiko\core\Controller
         }
         $this->setContent( $this->getLayout('message', $message) );
     }
-
 
     /**
      */
