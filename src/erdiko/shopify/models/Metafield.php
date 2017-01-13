@@ -3,9 +3,9 @@
  * Metafield model
  * Shopify API, https://docs.shopify.com/api/metafield
  *
- * @category    shopify
- * @copyright   Copyright (c) 2015, Arroyo Labs, www.arroyolabs.com
- * @author      John Arroyo, john@arroyolabs.com
+ * @package     erdiko/shopify/models
+ * @copyright   2012-2017 Arroyo Labs, Inc. http://www.arroyolabs.com
+ * @author      John Arroyo <john@arroyolabs.com>
  */
 namespace erdiko\shopify\models;
 

@@ -3,12 +3,11 @@
  * Example Shopify Controller
  * Some examples of how to use the shopify API
  *
- * @category 	shopify
- * @package   	example
- * @copyright	Copyright (c) 2016, Arroyo Labs, www.arroyolabs.com
- * @author 		Coleman Tung, coleman@arroyolabs.com
- * @author 		John Arroyo, john@arroyolabs.com
- * @author 		Andy Armstrong, andy@arroyolabs.com
+ * @package     erdiko/shopify/models
+ * @copyright   2012-2017 Arroyo Labs, Inc. http://www.arroyolabs.com
+ * @author 		Coleman Tung
+ * @author      John Arroyo <john@arroyolabs.com>
+ * @author 		Andy Armstrong <andy@arroyolabs.com>
  */
 
 namespace erdiko\shopify\controllers;
